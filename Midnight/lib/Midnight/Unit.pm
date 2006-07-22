@@ -42,6 +42,7 @@ sub decrement_energy {
     $self->set_energy($self->get_energy - $decrement);
 }
 
+
 package Midnight::Unit::Condition;
 
 use warnings;
@@ -67,8 +68,9 @@ sub get {
 }
 
 use overload
-    '""'    => sub { return $conditions{${$_[0]}} },
-    '0+'    => sub { return ${$_[0]} },
-    '<=>'   => sub { 0+$_[0] <=> 0+$_[1] };
+    '""'     => sub { return $conditions{${$_[0]}} },
+    '0+'     => sub { return ${$_[0]} },
+    '<=>'    => sub { 0+$_[0] <=> 0+$_[1] },
+    fallback => 1;
 
 1;

@@ -28,28 +28,62 @@ my %recruited_by_key    : ATTR ( :get<recruited_by_key> );
 my %recruited           : ATTR ( :set<recruited> );
 my %hidden              : ATTR ( :set<hidden> );
 
+sub BUILD {
+}
+
 sub get_courage {
+    my ($self) = @_;
+
+    $self->calculate_courage;
+    return $courage{ident $self};
 }
 
 sub calculate_courage {
+    my ($self) = @_;
+
+    my $fear = $courage_base{ident $self} - $self->get_location->get_ice_fear / 7;
+    $courage{ident $self} = Midnight::Character::Courage->get($fear / 8);
 }
 
 sub set_location {
+    my ($self, $location) = @_;
+
+    if ($self->get_location) {
+        $self->get_location->remove_character($self);
+    }
+
+    $self->SUPER::set_location($location);
+    $self->get_location->add_character($self);
 }
 
 sub is_alive {
+    my ($self) = @_;
+
+    return $life{ident $self} > 0;
 }
 
 sub kill {
+    my ($self) = @_;
+
+    $life{ident $self} = 0;
 }
 
 sub is_hidden {
+    my ($self) = @_;
+
+    return $hidden{ident $self};
 }
 
 sub can_hide {
+    my ($self) = @_;
+
+    return $self != $self->get_game->MORKIN and
+           $self->get_warriors->get_how_many == 0 and
+           $self->get_riders->get_how_many == 0;
 }
 
 sub can_walk_forward {
+    
 }
 
 sub can_leave {
@@ -151,8 +185,9 @@ sub get {
 }
 
 use overload
-    '""'    => sub { return $descriptions{${$_[0]}} },
-    '0+'    => sub { return ${$_[0]} },
-    '<=>'   => sub { 0+$_[0] <=> 0+$_[1] };
+    '""'     => sub { return $descriptions{${$_[0]}} },
+    '0+'     => sub { return ${$_[0]} },
+    '<=>'    => sub { 0+$_[0] <=> 0+$_[1] },
+    fallback => 1;
 
 1;

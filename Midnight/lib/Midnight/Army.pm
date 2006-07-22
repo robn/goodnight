@@ -32,19 +32,54 @@ sub add_casualties {
     my ($self, $number) = @_;
 
     $self->decrease_numbers($number);
-    $casualties->{ident $self} += $number;
+    $casualties{ident $self} += $number;
 }
 
 sub dawn {
+    my ($self) = @_;
+
+#    $enemy_killed{ident $self} = 0;
+#    $casualties{ident $self} = 0;
 }
 
 sub increment_energy {
+    my ($self, $increment) = @_;
+
+    if ($type{ident $self} == Midnight::Army::Type::RIDERS) {
+        $self->SUPER::increment_energy($increment + 6);
+    }
+    else {
+        $self->SUPER::increment_energy($increment + 4);
+    }
 }
 
 sub guard {
+    my $self = shift;
+
+    my $location;
+    if (@_ == 1) {
+        ($location) = @_:
+    }
+    else {
+        my ($x, $y) = @_;
+        $location = $self->get_game->get_location($x, $y);
+    }
+
+    $self->set_location($location);
+    $self->get_location->set_guard($self);
 }
 
 sub switch_sides {
+    my ($self) = @_;
+
+    if ($self->get_race == Midnight::Race::FOUL) {
+        $self->set_race(Midnight::Race::FREE);
+        $how_many{ident $self} = 200;
+    }
+    else {
+        $self->set_race(Midnight::Race::FOUL);
+        $how_many{ident $self} = 250;
+    }
 }
 
 sub save {
@@ -54,19 +89,29 @@ sub load {
 }
 
 use overload
-    '""'    =>
+    '""'     =>
+        sub {
+            my ($self) = @_;
+            my $id = ident $self;
+            return $how_many{$id} != 0 ? "$how_many{$id} $type{$id}"
+                                       : "no $type{$id}";
+        },
+    fallback => 1;
+
 
 package Midnight::Army::Type;
 
 use warnings;
 use strict;
 
-h
+my $warriors = bless do { \(my $x = "warriors") }, __PACKAGE__;
+my $riders   = bless do { \(my $x = "riders"  ) }, __PACKAGE__;
 
-use constant WARRIORS => bless do { \(my $x = "warriors") }, __PACKAGE__;
-use constant RIDERS   => bless do { \(my $x = "riders") }, __PACKAGE__;
+sub WARRIORS { $warriors }
+sub RIDERS   { $riders   }
 
 use overload
-    '""'    => sub { return ${$_[0]} };
+    '""'     => sub { return ${$_[0]} },
+    fallback => 1;
 
 1;
