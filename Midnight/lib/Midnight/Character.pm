@@ -7,26 +7,26 @@ use base qw(Midnight::Unit);
 
 use Class::Std;
 
-my %id                  : ATTR ( :get<id> );
-my %name                : ATTR ( :get<name> );
-my %title               : ATTR ( :get<title> );
-my %life                : ATTR ( :get<life> );
-my %strength            : ATTR ( :get<strength> :set<strength> );
-my %courage_base        : ATTR ( :get<courage_base> );
+my %id                  : ATTR( :get<id> );
+my %name                : ATTR( :get<name> );
+my %title               : ATTR( :get<title> );
+my %life                : ATTR( :get<life> );
+my %strength            : ATTR( :get<strength> :set<strength> );
+my %courage_base        : ATTR( :get<courage_base> );
 my %courage             : ATTR;
-my %direction           : ATTR ( :get<direction> :set<direction> );
-my %object              : ATTR ( :get<object> :set<object> );
+my %direction           : ATTR( :get<direction> :set<direction> );
+my %object              : ATTR( :get<object> :set<object> );
 my %found               : ATTR;
-my %warriors            : ATTR ( :get<warriors> );
-my %riders              : ATTR ( :get<riders> );
-my %time                : ATTR ( :get<time> );
-my %killed              : ATTR ( :get<killed> :set<killed> );
-my %battle              : ATTR ( :get<battle> :set<battle> );
-my %on_horse            : ATTR ( :set<on_horse> );
-my %recruiting_key      : ATTR ( :get<recruiting_key> );
-my %recruited_by_key    : ATTR ( :get<recruited_by_key> );
-my %recruited           : ATTR ( :set<recruited> );
-my %hidden              : ATTR ( :set<hidden> );
+my %warriors            : ATTR( :get<warriors> );
+my %riders              : ATTR( :get<riders> );
+my %time                : ATTR( :get<time> );
+my %killed              : ATTR( :get<killed> :set<killed> );
+my %battle              : ATTR( :get<battle> :set<battle> );
+my %on_horse            : ATTR( :set<on_horse> );
+my %recruiting_key      : ATTR( :get<recruiting_key> );
+my %recruited_by_key    : ATTR( :get<recruited_by_key> );
+my %recruited           : ATTR( :set<recruited> );
+my %hidden              : ATTR( :set<hidden> );
 
 sub BUILD {
 }
@@ -214,6 +214,8 @@ sub recruit_men {
 }
 
 sub can_stand_on_guard {
+    my ($self) = @_;
+
     my $guards = $self->get_location->get_guard;
 
     return $guards and $guards->get_race = $self->get_race and
@@ -281,13 +283,13 @@ sub describe_battle {
             $desc .= " and ";
         }
         if ($warriors->get_casualties != 0) {
-            $desc .= $warrios->get_casualties . " warriors";
+            $desc .= $warriors->get_casualties . " warriors";
         }
         $desc .= ". ";
     }
 
     $desc .= $self->get_name . " alone slew ";
-    $desc .= $enemy_killed{ident $self} . " of the Enemy. ";
+    $desc .= $self->get_enemy_killed . " of the Enemy. ";
 
     if ($riders->get_enemy_killed != 0) {
         $desc .= "His riders killed " . $riders->get_enemy_killed . " of the enemy. ";
@@ -342,25 +344,139 @@ sub clear_found {
 }
 
 sub seek {
+    my ($self) = @_;
+
     my $object = $self->get_location->get_object;
     my $found = $object;
 
-    if 
+    if ($object == Midnight::Location::Object::DRAGONSLAYER or
+        $object == Midnight::Location::Object::WOLFSLAYER) {
+        if ($self->get_object != Midnight::Location::Object::ICE_CROWN and
+            $self->get_object != Midnight::Location::Object::MOON_RING) {
+            $self->get_location->set_object($self->get_object);
+            $self->set_object($object);
+        }
+    }
+
+    elsif ($object == Midnight::Location::Object::WILD_HORSES) {
+        if ($self->get_race == Midnight::Race::FREE or
+            $self->get_race == Midnight::Race::FEY or
+            $self->get_race == Midnight::Race::TARG or
+            $self->get_race == Midnight::Race::WISE) {
+            $self->set_on_horse(1);
+        }
+    }
+
+    elsif ($object == Midnight::Location::Object::SHELTER) {
+        $self->increment_energy(0x10);
+        $self->get_location->set_object(Midnight::Location::Object::NOTHING);
+    }
+
+    elsif ($object == Midnight::Location::Object::HAND_OF_DARK) {
+        $time{ident $self}->night;
+        $self->get_location->set_object(Midnight::Location::Object::NOTHING);
+    }
+
+    elsif ($object == Midnight::Location::Object::CUP_OF_DREAMS) {
+        $time{ident $self}->dawn;
+        $self->get_location->set_object(Midnight::Location::Object::NOTHING);
+    }
+
+    elsif ($object == Midnight::Location::Object::WATERS_OF_LIFE) {
+        $self->set_energy(0x78);
+        $warriors{ident $self}->set_energy(0x78);
+        $riders{ident $self}->set_energy(0x78);
+        $self->get_location->set_object(Midnight::Location::Object::NOTHING);
+    }
+
+    elsif ($object == Midnight::Location::Object::SHADOWS_OF_DEATH) {
+        $self->set_energy(0);
+        $warriors{ident $self}->set_energy(0);
+        $riders{ident $self}->set_energy(0);
+        $self->get_location->set_object(Midnight::Location::Object::NOTHING);
+    }
+
+    elsif ($object == Midnight::Location::Object::ICE_CROWN or
+           $object == Midnight::Location::Object::MOON_RING) {
+        if ($self == $self->get_game->MORKIN) {
+            $self->get_location->set_object($self->get_object);
+            $self->set_object($object);
+        }
+        else {
+            return Midnight::Location::Object::NOTHING;
+        }
+    }
+
+    return $object;
 }
 
 sub drop_object {
+    my ($self) = @_;
+
+    $self->get_location->set_object($self->get_object);
+    $self->set_object(Midnight::Location::Object::NOTHING);
 }
 
 sub can_fight {
+    my ($self) = @_;
+
+    my $object = $self->get_location->get_object;
+    return
+        ! $self->is_hidden and (
+            $object == Midnight::Location::Object::DRAGONS or
+            $object == Midnight::Location::Object::ICE_TROLLS or
+            $object == Midnight::Location::Object::SKULKRIN or
+            $object == Midnight::Location::Object::WOLVES) and
+        (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN);
 }
 
 sub fight {
+    my ($self) = @_;
+
+    my $object = $self->get_location->get_object;
+    my $killed = $object;
+
+    for my $character (@{$self->get_location->get_characters}) {
+        if ($character->get_warriors->get_how_many != 0 or
+            $character->get_riders->get_how_many != 0) {
+            $self->get_location->set_object(Midnight::Location::Object::NOTHING);
+            return;
+        }
+    }
+
+    if (($object == Midnight::Location::Object::WOLVES and
+         $self->get_object == Midnight::Location::Object::WOLFSLAYER) or
+        ($object == Midnight::Location::Object::DRAGONS and
+         $self->get_object == Midnight::Location::Object::DRAGONSLAYER)) {
+        $self->get_location->set_object(Midnight::Location::Object::NOTHING);
+        return;
+    }
+
+    $self->maybe_lose;
+
+    # Does it make sense to remove the nasties even if the character died?
+    # (Original LoM limitation)
+    $self->get_location->set_object(Midnight::Location::Object::NOTHING);
 }
 
 sub maybe_lose {
+    my ($self) = @_;
+
+    if ($self->is_on_horse) {
+        $self->set_on_horse($self->get_game->random(2) == 0);
+    }
+
+    if (($self->get_energy / 2 - 0x40 + $life{ident $self}) < $self->get_game->random(256)) {
+        $self->kill;
+    }
 }
 
 sub clear_killed {
+    my ($self) = @_;
+
+    if ($self->is_alive) {
+        undef $killed{ident $self};
+    }
 }
 
 sub save {
