@@ -104,14 +104,8 @@ package Midnight::Army::Type;
 use warnings;
 use strict;
 
-my $warriors = bless do { \(my $x = "warriors") }, __PACKAGE__;
-my $riders   = bless do { \(my $x = "riders"  ) }, __PACKAGE__;
-
-sub WARRIORS { $warriors }
-sub RIDERS   { $riders   }
-
-use overload
-    '""'     => sub { return ${$_[0]} },
-    fallback => 1;
+use Class::Constant
+    WARRIORS => "warriors",
+    RIDERS   => "riders";
 
 1;

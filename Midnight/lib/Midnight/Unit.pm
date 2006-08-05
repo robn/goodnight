@@ -27,7 +27,7 @@ sub set_energy {
     $energy = MAX_ENERGY if $energy > MAX_ENERGY;
 
     $energy{ident $self} = $energy;
-    $condition{ident $self} = Midnight::Unit::Condition->get($energy);
+    $condition{ident $self} = Midnight::Unit::Condition->by_ordinal($energy << 4);
 }
 
 sub increment_energy {
@@ -48,29 +48,14 @@ package Midnight::Unit::Condition;
 use warnings;
 use strict;
 
-my @conditions = (
-    "utterly tired and cannot continue",
-    "very tired",
-    "tired",
-    "quite tired",
-    "slightly tired",
-    "invigorated",
-    "very invigorated",
-    "utterly invigorated",
-);
-
-sub get {
-    my ($class, $energy) = @_;
-
-    $energy =>> 4;
-
-    return bless \$energy, $class;
-}
-
-use overload
-    '""'     => sub { return $conditions{${$_[0]}} },
-    '0+'     => sub { return ${$_[0]} },
-    '<=>'    => sub { 0+$_[0] <=> 0+$_[1] },
-    fallback => 1;
+use Class::Constant
+    UTTERLY_TIRED       => "utterly tired and cannot continue",
+    VERY_TIRED          => "very tired",
+    TIRED               => "tired",
+    QUITE_TIRED         => "quite tired",
+    SLIGHTLY_TIRED      => "slightly tired",
+    INVIGORATED         => "invigorated",
+    VERY_INVIGORATED    => "very invigorated",
+    UTTERLY_INVIGORATED => "utterly invigorated";
 
 1;
