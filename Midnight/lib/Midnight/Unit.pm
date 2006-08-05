@@ -7,12 +7,12 @@ use Class::Std;
 
 use constant MAX_ENERGY => 127;
 
-my %game                : ATTR ( :get<game> :init_arg<game> );
-my %race                : ATTR ( :name<race> );
-my %location            : ATTR ( :get<location> :set<location> );
-my %energy              : ATTR ( :get<energy> );
-my %condition           : ATTR ( :get<condition> );
-my %enemy_killed        : ATTR ( :get<enemy_killed> :set<enemy_killed> );
+my %game                : ATTR( :get<game> :init_arg<game> );
+my %race                : ATTR( :name<race> );
+my %location            : ATTR( :get<location> :set<location> );
+my %energy              : ATTR( :get<energy> );
+my %condition           : ATTR( :get<condition> );
+my %enemy_killed        : ATTR( :get<enemy_killed> :set<enemy_killed> );
 
 sub START {
     my ($self, $ident, $args) = @_;
