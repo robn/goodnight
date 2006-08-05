@@ -5,24 +5,26 @@ use strict;
 
 use base qw(Midnight::Unit);
 
+use Midnight::Army::Type;
+
 use Class::Std;
 
-my %how_many            : ATTR ( :name<how_many> );
-my %type                : ATTR ( :get<type> );
-my %success_chance      : ATTR ( :get<success_chance> :set<success_chance> );
-my %casualties          : ATTR ( :get<casualties> :set<casualties> );
+my %how_many            : ATTR( :name<how_many> );
+my %type                : ATTR( :get<type> );
+my %success_chance      : ATTR( :get<success_chance> :set<success_chance> );
+my %casualties          : ATTR( :get<casualties> :set<casualties> );
 
 sub increase_numbers {
     my ($self, $increase) = @_;
 
-    $how_many{ident $self} += $increasep
+    $how_many{ident $self} += $increase;
 }
 
 sub decrease_numbers {
     my ($self, $decrease) = @_;
 
     if ($decrease > $how_many{ident $self}) {
-        $decrease = $how_many[ident $self);
+        $decrease = $how_many{ident $self};
     }
 
     $how_many{ident $self} -= $decrease;
@@ -58,7 +60,7 @@ sub guard {
 
     my $location;
     if (@_ == 1) {
-        ($location) = @_:
+        ($location) = @_;
     }
     else {
         my ($x, $y) = @_;
@@ -97,15 +99,5 @@ use overload
                                        : "no $type{$id}";
         },
     fallback => 1;
-
-
-package Midnight::Army::Type;
-
-use warnings;
-use strict;
-
-use Class::Constant
-    WARRIORS => "warriors",
-    RIDERS   => "riders";
 
 1;

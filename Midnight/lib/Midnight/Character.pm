@@ -5,6 +5,8 @@ use strict;
 
 use base qw(Midnight::Unit);
 
+use Midnight::Character::Courage;
+
 use Class::Std;
 
 my %id                  : ATTR( :get<id> );
@@ -491,21 +493,5 @@ sub update {
 use overload
     '""'    => \&get_title,
     '<=>'   => sub { ref $_[0] eq ref $_[1] ? $_[0]->get_id <=> $_[1]->get_id : -1 };
-
-
-package Midnight::Character::Courage;
-
-use warnings;
-use strict;
-
-use Class::Constant
-    UTTERLY_AFRAID  => "utterly afraid",
-    VERY_AFRAID     => "very afraid",
-    AFRAID          => "afraid",
-    QUITE_AFRAID    => "quite afraid",
-    SLIGHTLY_AFRAID => "slightly afraid",
-    BOLD            => "bold",
-    VERY_BOLD       => "very bold",
-    UTTERLY_BOLD    => "utterly bold";
 
 1;
