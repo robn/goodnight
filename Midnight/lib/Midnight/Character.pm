@@ -6,6 +6,7 @@ use strict;
 use base qw(Midnight::Unit);
 
 use Midnight::Character::Courage;
+use Midnight::Race;
 
 use Class::Std;
 

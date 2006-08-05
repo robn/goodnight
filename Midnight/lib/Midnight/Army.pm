@@ -6,6 +6,7 @@ use strict;
 use base qw(Midnight::Unit);
 
 use Midnight::Army::Type;
+use Midnight::Race;
 
 use Class::Std;
 
