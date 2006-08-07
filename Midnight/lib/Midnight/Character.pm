@@ -13,12 +13,12 @@ use Midnight::Race;
 
 use Class::Std;
 
-my %id                  : ATTR( :get<id> );
-my %name                : ATTR( :get<name> );
-my %title               : ATTR( :get<title> );
-my %life                : ATTR( :get<life> );
+my %id                  : ATTR( :get<id> :init_arg<id> );
+my %name                : ATTR( :get<name> :init_arg<name> );
+my %title               : ATTR( :get<title> :init_arg<title> );
+my %life                : ATTR( :get<life> :init_arg<life> );
 my %strength            : ATTR( :get<strength> :set<strength> );
-my %courage_base        : ATTR( :get<courage_base> );
+my %courage_base        : ATTR( :get<courage_base> :init_arg<courage_base> );
 my %courage             : ATTR;
 my %direction           : ATTR( :get<direction> :set<direction> );
 my %object              : ATTR( :get<object> :set<object> );
@@ -29,12 +29,26 @@ my %time                : ATTR( :get<time> );
 my %killed              : ATTR( :get<killed> :set<killed> );
 my %battle              : ATTR( :get<battle> :set<battle> );
 my %on_horse            : ATTR( :set<on_horse> );
-my %recruiting_key      : ATTR( :get<recruiting_key> );
-my %recruited_by_key    : ATTR( :get<recruited_by_key> );
+my %recruiting_key      : ATTR( :get<recruiting_key> :init_arg<recruiting_key> );
+my %recruited_by_key    : ATTR( :get<recruited_by_key> :init_arg<recruted_by_key> );
 my %recruited           : ATTR( :set<recruited> );
 my %hidden              : ATTR( :set<hidden> );
 
-sub BUILD {
+sub START {
+    my ($self, $ident, $args) = @_;
+
+    $direction{$ident} = Midnight::Map::Direction::NORTH;
+
+    $time{$ident} = Midnight::Time->new;
+
+    $object{$ident} = Midnight::Location::Object::NOTHING;
+
+    if ($race{$ident} == Midnight::Race::DRAGON or $race{$ident} == Midnight::Race::SKULKRIN) {
+        $on_horse{$ident} = 0;
+    }
+    else {
+        $on_horse{$ident} = 1;
+    }
 }
 
 sub get_courage {
