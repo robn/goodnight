@@ -11,9 +11,15 @@ use Midnight::Race;
 use Class::Std;
 
 my %how_many            : ATTR( :name<how_many> );
-my %type                : ATTR( :get<type> );
+my %type                : ATTR( :get<type> :init_arg<type> );
 my %success_chance      : ATTR( :get<success_chance> :set<success_chance> );
 my %casualties          : ATTR( :get<casualties> :set<casualties> );
+
+sub BUILD {
+    my ($self, $ident, $args) = @_;
+
+    $args->{energy} ||= 88;
+}
 
 sub increase_numbers {
     my ($self, $increase) = @_;
