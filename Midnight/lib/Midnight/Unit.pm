@@ -10,7 +10,7 @@ use Class::Std;
 use constant MAX_ENERGY => 127;
 
 my %game                : ATTR( :get<game> :init_arg<game> );
-my %race                : ATTR( :name<race> :init_arg<game> );
+my %race                : ATTR( :name<race> );
 my %location            : ATTR( :get<location> :set<location> );
 my %energy              : ATTR( :get<energy> );
 my %condition           : ATTR( :get<condition> );
