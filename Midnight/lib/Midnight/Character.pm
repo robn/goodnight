@@ -17,7 +17,7 @@ my %id                  : ATTR( :get<id> :init_arg<id> );
 my %name                : ATTR( :get<name> :init_arg<name> );
 my %title               : ATTR( :get<title> :init_arg<title> );
 my %life                : ATTR( :get<life> :init_arg<life> );
-my %strength            : ATTR( :get<strength> :set<strength> );
+my %strength            : ATTR( :get<strength> :set<strength> :init_arg<strength> );
 my %courage_base        : ATTR( :get<courage_base> :init_arg<courage_base> );
 my %courage             : ATTR;
 my %direction           : ATTR( :get<direction> :set<direction> );
