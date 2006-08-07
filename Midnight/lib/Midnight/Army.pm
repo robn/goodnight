@@ -91,20 +91,18 @@ sub switch_sides {
     }
 }
 
+sub as_string {
+    my ($self) = @_;
+
+    return $how_many{ident $self} != 0 ? "$how_many{ident $self} $type{ident $self}"
+                                       : "no $type{ident $self}";
+
+use overload q{""} => \&as_string;
+
 sub save {
 }
 
 sub load {
 }
-
-use overload
-    '""'     =>
-        sub {
-            my ($self) = @_;
-            my $id = ident $self;
-            return $how_many{$id} != 0 ? "$how_many{$id} $type{$id}"
-                                       : "no $type{$id}";
-        },
-    fallback => 1;
 
 1;

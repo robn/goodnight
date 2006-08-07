@@ -294,12 +294,6 @@ sub switch_sides {
     }
 }
 
-sub save {
-}
-
-sub load {
-}
-
 sub as_string {
     my ($self) = @_;
 
@@ -312,5 +306,11 @@ sub as_string {
 }
 
 use overload q{""} => \&as_string;
+
+sub save {
+}
+
+sub load {
+}
 
 1;

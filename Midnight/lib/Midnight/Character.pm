@@ -499,6 +499,10 @@ sub clear_killed {
     }
 }
 
+use overload
+    q{""}  => \&get_title,
+    q{<=>} => sub { ref $_[0] eq ref $_[1] ? $_[0]->get_id <=> $_[1]->get_id : -1 };
+
 sub save {
 }
 
@@ -507,9 +511,5 @@ sub load {
 
 sub update {
 }
-
-use overload
-    '""'    => \&get_title,
-    '<=>'   => sub { ref $_[0] eq ref $_[1] ? $_[0]->get_id <=> $_[1]->get_id : -1 };
 
 1;

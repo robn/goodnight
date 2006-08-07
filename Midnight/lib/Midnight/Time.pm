@@ -54,27 +54,28 @@ sub is_night {
     return $time{ident $self} == NIGHT;
 }
 
-use overload
-    q{""} => sub {
-        my ($self) = @_;
+sub as_string {
+    my ($self) = @_;
 
-        if ($time{ident $self} == DAWN) {
-            return "It is dawn.";
-        }
-        if ($time{ident $self} == NIGHT) {
-            return "It is night.";
-        }
+    if ($time{ident $self} == DAWN) {
+        return "It is dawn.";
+    }
+    if ($time{ident $self} == NIGHT) {
+        return "It is night.";
+    }
 
-        my $lt = "";
-        if ($time{ident $self} % 2 == 1) {
-            $lt = "Less than ";
-        }
+    my $lt = "";
+    if ($time{ident $self} % 2 == 1) {
+        $lt = "Less than ";
+    }
 
-        return
-            $lt .
-            ($time{ident $self} / 2 + 1) .
-            " hour" . (($time{ident $self} < 3) ? "" : "s") .
-            "of the day remain";
-    };
+    return
+        $lt .
+        ($time{ident $self} / 2 + 1) .
+        " hour" . (($time{ident $self} < 3) ? "" : "s") .
+        "of the day remain";
+};
+
+use overload q{""} => \&as_string;
 
 1;
