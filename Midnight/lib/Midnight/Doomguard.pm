@@ -5,6 +5,7 @@ use strict;
 
 use base qw(Midnight::Army);
 
+use Midnight::Doomguard::Orders;
 use Midnight::Race;
 
 use Class::Std;
@@ -53,7 +54,7 @@ sub set_location {
 sub decrease_numbers {
     my ($self, $decrease) = @_;
 
-    $self->SUPER::decrease_numbers($numbers);
+    $self->SUPER::decrease_numbers($decrease);
 
     if ($self->get_how_many == 0) {
         $self->get_location->remove_army($self);
@@ -229,69 +230,6 @@ sub move_to {
 
     $move_count{ident $self} += $cost;
     $self->set_location($location);
-}
-
-sub save {
-}
-
-sub load {
-}
-
-
-
-
-sub add_casualties {
-    my ($self, $number) = @_;
-
-    $self->decrease_numbers($number);
-    $casualties{ident $self} += $number;
-}
-
-sub dawn {
-    my ($self) = @_;
-
-#    $enemy_killed{ident $self} = 0;
-#    $casualties{ident $self} = 0;
-}
-
-sub increment_energy {
-    my ($self, $increment) = @_;
-
-    if ($type{ident $self} == Midnight::Army::Type::RIDERS) {
-        $self->SUPER::increment_energy($increment + 6);
-    }
-    else {
-        $self->SUPER::increment_energy($increment + 4);
-    }
-}
-
-sub guard {
-    my $self = shift;
-
-    my $location;
-    if (@_ == 1) {
-        ($location) = @_;
-    }
-    else {
-        my ($x, $y) = @_;
-        $location = $self->get_game->get_location($x, $y);
-    }
-
-    $self->set_location($location);
-    $self->get_location->set_guard($self);
-}
-
-sub switch_sides {
-    my ($self) = @_;
-
-    if ($self->get_race == Midnight::Race::FOUL) {
-        $self->set_race(Midnight::Race::FREE);
-        $how_many{ident $self} = 200;
-    }
-    else {
-        $self->set_race(Midnight::Race::FOUL);
-        $how_many{ident $self} = 250;
-    }
 }
 
 sub as_string {
