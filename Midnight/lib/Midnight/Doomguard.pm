@@ -6,6 +6,8 @@ use strict;
 use base qw(Midnight::Army);
 
 use Midnight::Doomguard::Orders;
+use Midnight::Location::Feature;
+use Midnight::Map::Direction;
 use Midnight::Race;
 
 use Class::Std;
@@ -182,7 +184,7 @@ sub move_towards {
             }
         }
 
-        if ($destination->get_feature != Midnight::location::Feature::FROZEN_WASTE) {
+        if ($destination->get_feature != Midnight::Location::Feature::FROZEN_WASTE) {
             $self->move_to($destination);
         }
         else {

@@ -9,6 +9,7 @@ use Midnight::Army::Type;
 use Midnight::Character::Courage;
 use Midnight::Location::Feature;
 use Midnight::Location::Object;
+use Midnight::Map::Direction;
 use Midnight::Race;
 
 use Class::Std;
@@ -43,7 +44,8 @@ sub START {
 
     $object{$ident} = Midnight::Location::Object::NOTHING;
 
-    if ($race{$ident} == Midnight::Race::DRAGON or $race{$ident} == Midnight::Race::SKULKRIN) {
+    if ($self->get_race == Midnight::Race::DRAGON or
+        $self->get_race == Midnight::Race::SKULKRIN) {
         $on_horse{$ident} = 0;
     }
     else {
