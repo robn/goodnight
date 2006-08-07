@@ -5,7 +5,10 @@ use strict;
 
 use base qw(Midnight::Unit);
 
+use Midnight::Army::Type;
 use Midnight::Character::Courage;
+use Midnight::Location::Feature;
+use Midnight::Location::Object;
 use Midnight::Race;
 
 use Class::Std;
