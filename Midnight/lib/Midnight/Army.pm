@@ -96,6 +96,7 @@ sub as_string {
 
     return $how_many{ident $self} != 0 ? "$how_many{ident $self} $type{ident $self}"
                                        : "no $type{ident $self}";
+}
 
 use overload q{""} => \&as_string;
 
