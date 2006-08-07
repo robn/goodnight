@@ -1,5 +1,8 @@
 package Midnight::Location::Feature;
 
+use warnings;
+use strict;
+
 use Class::Constant
     MOUNTAIN     => "mountains",
     CITADEL      => "citadel",

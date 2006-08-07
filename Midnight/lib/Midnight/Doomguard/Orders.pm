@@ -1,5 +1,8 @@
 package Midnight::Doomguard::Orders;
 
+use warnings;
+use strict;
+
 use Class::Constant
     FOLLOW => "Follow",
     GOTO   => "Go to",

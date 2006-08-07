@@ -1,5 +1,8 @@
 package Midnight::Location::Object;
 
+use warnings;
+use strict;
+
 use Class::Constant
     NOTHING          => "nothing",
     WOLVES           => "wolves",

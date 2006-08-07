@@ -1,5 +1,8 @@
 package Midnight::Race;
 
+use warnings;
+use strict;
+
 use Class::Constant
     FREE     => "Free",
     FEY      => "Fey",

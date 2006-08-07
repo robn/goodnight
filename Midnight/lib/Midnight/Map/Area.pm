@@ -1,5 +1,8 @@
 package Midnight::Map::Area;
 
+use warnings;
+use strict;
+
 use Class::Constant
     NOTHING   => "Nothing",
     LOTHORIL  => "Lothoril",
