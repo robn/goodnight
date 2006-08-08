@@ -13,4 +13,22 @@ use Class::Constant
     WEST      => "West",      { x => -1, y =>  0 },
     NORTHWEST => "Northwest", { x => -1, y => -1 };
 
+sub turn_right {
+    my ($direction) = @_;
+
+    return $direction->by_ordinal($direction->get_ordinal + 1 % 8);
+}
+
+sub turn_left {
+    my ($direction) = @_;
+
+    return $direction->by_ordinal($direction->get_ordinal - 1 % 8);
+}
+
+sub is_diagonal {
+    my ($direction) = @_;
+
+    return $direction->x != 0 and $direction->y != 0;
+}
+
 1;
