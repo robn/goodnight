@@ -476,8 +476,6 @@ sub fight {
 
     $self->maybe_lose;
 
-    # Does it make sense to remove the nasties even if the character died?
-    # (Original LoM limitation)
     $self->get_location->set_object(Midnight::Location::Object::NOTHING);
 }
 
