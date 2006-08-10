@@ -3,20 +3,24 @@ package Midnight::Location;
 use warnings;
 use strict;
 
+use Midnight::Location::Fear;
+use Midnight::Location::Feature;
+use Midnight::Map;
+
 use Class::Std;
 
-my %game        : ATTR( :get<game> :init_arg<game>
-my %x           : ATTR( :get<x> :init_arg<x>
-my %y           : ATTR( :get<y> :init_arg<y>
-my %feature     : ATTR( :get<feature> :init_arg<feature>
-my %object      : ATTR( :get<object> :init_arg<object>
-my %area        : ATTR( :get<domain> :init_arg<area>
-my %domain      : ATTR( :get<domain_flag> :init_arg<domain>
-my %special     : ATTR( :init_arg<special>
-my %guard       : ATTR( :get<guard>
-my %armies      : ATTR( :get<armies>
-my %characters  : ATTR
-my %ice_fear    : ATTR
+my %game        : ATTR( :get<game> :init_arg<game> );
+my %x           : ATTR( :get<x> :init_arg<x> );
+my %y           : ATTR( :get<y> :init_arg<y> );
+my %feature     : ATTR( :get<feature> :init_arg<feature> );
+my %object      : ATTR( :get<object> :init_arg<object> );
+my %area        : ATTR( :get<domain> :init_arg<area> );
+my %domain      : ATTR( :get<domain_flag> :init_arg<domain> );
+my %special     : ATTR( :init_arg<special> );
+my %guard       : ATTR( :get<guard> );
+my %armies      : ATTR( :get<armies> );
+my %characters  : ATTR( :get<characters> );
+my %ice_fear    : ATTR;
 
 sub get_coordinates {
     my ($self) = @_;
@@ -89,7 +93,7 @@ sub set_guard {
 sub add_army {
     my ($self, $army) = @_;
 
-    push @{$army{ident $self}}, $army;
+    push @{$armies{ident $self}}, $army;
 
     if ($feature{ident $self} == Midnight::Location::Feature::PLAINS) {
         $feature{ident $self} = Midnight::Location::Feature::ARMY;
@@ -113,6 +117,101 @@ sub remove_army {
     if ($feature{ident $self} == Midnight::Location::Feature::ARMY and @{$armies} == 0) {
         $feature{ident $self} = Midnight::Location::Feature::PLAINS;
     }
+}
+
+sub add_character {
+    my ($self, $character) = @_;
+
+    push @{$characters{ident $self}}, $character;
+
+    if ($feature{ident $self} == Midnight::Location::Feature::PLAINS and
+        ($character->get_riders->get_how_many > 0 or $character->get_warriors_get_how_many > 0)) {
+        $feature{ident $self} = Midnight::Location::Feature::ARMY;
+    }
+}
+
+sub remove_character {
+    my ($self, $character) = @_;
+
+    my $characters = $characters{ident $self};
+
+    my $index = 0;
+    while ($characters->[$index] != $character) {
+        $index++;
+    }
+
+    if ($index < @{$characters}) {
+        splice @{$characters}, $index, 1;
+    }
+
+    if ($feature{ident $self} == Midnight::Location::Feature::ARMY) {
+        for my $character (@{$characters}) {
+            if ($character->get_riders->get_how_many > 0 or
+                $character->get_warriors->get_how_many > 0) {
+                return;
+            }
+        }
+
+        $feature{ident $self} = Midnight::Location::Feature::PLAINS;
+    }
+}
+
+sub riders_battle_bonus {
+    my ($self) = @_;
+
+    if ($feature{ident $self} == Midnight::Location::Feature::MOUNTAIN) {
+        return 0x20;
+    }
+    else {
+        return 0x40;
+    }
+}
+
+sub get_ice_fear {
+    my ($self) = @_;
+
+    my $game = $game{ident $self};
+
+    my $fear;
+    if ($game->MORKIN->is_alive) {
+        if (Midnight::Map::calc_distance($self, $game->MORKIN->get_location) == 0) {
+            $ice_fear{ident $self} =
+                0x1ff - Midnight::Map::calc_distance($self, $self->get_map->TOWER_OF_DESPAIR) * 4;
+            return $ice_fear{ident $self};
+        }
+        else {
+            $fear = Midnight::Map::calc_distance($game->MORKIN->get_location,
+                                                 $self->get_map->TOWER_OF_DESPAIR);
+        }
+    }
+    else {
+        $fear = 0x7f;
+    }
+
+    if ($game->LUXOR->is_alive) {
+        $fear += Midnight::Map::calc_distance($self, $game->LUXOR->get_location);
+    }
+    else {
+        $fear += 0x7f;
+    }
+
+    $fear += 0x30;
+    $fear += $game->get_doomdarks_citadels;
+
+    $ice_fear{ident $self} = $fear;
+    return $fear;
+}
+
+sub describe_ice_fear {
+    my ($self) = @_;
+
+    return Midnight::Location::Fear->by_ordinal((7 - $ice_fear{ident $self} / 0x40) % 8);
+}
+
+sub save {
+}
+
+sub load {
 }
 
 1;
