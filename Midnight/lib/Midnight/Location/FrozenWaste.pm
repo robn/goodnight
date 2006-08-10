@@ -29,3 +29,5 @@ sub get_instance {
 
     return $instance;
 }
+
+1;
