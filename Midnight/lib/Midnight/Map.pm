@@ -12,40 +12,28 @@ use Midnight::Map::Direction;
 
 use Class::Std;
 
-my %game                :ATTR( :init_arg<game> );
-my %locations           :ATTR;
-my %route_nodes         :ATTR;
-my %TOWER_OF_DESPAIR    :ATTR;
-my %XAJORKITH           :ATTR;
-my %USHGARAK            :ATTR;
-my %LAKE_MIRROW         :ATTR;
+# !!! suckish way of handling public variables
+my %public_data :ATTR;
+my %public_keys = map { $_ => 1 } qw(TOWER_OF_DESPAIR XAJORKITH USHGARAK LAKE_MIRROW);
+
+sub AUTOMETHOD {
+    my ($self, $ident, $args) = @_;
+    my $key = $_;
+
+    return if not $public_keys{$key};
+
+    return sub {
+        return $public_data{ident $self}->{$key} || ();
+    };
+}
+    
 
 # assigned at end of file
 my (@main_map, @ref_desc_map, @routes);
 
-sub TOWER_OF_DESPAIR {
-    my ($self) = @_;
-
-    return $TOWER_OF_DESPAIR{ident $self};
-}
-
-sub XAJORKITH {
-    my ($self) = @_;
-
-    return $XAJORKITH{ident $self};
-}
-
-sub USHGARAK {
-    my ($self) = @_;
-
-    return $USHGARAK{ident $self};
-}
-
-sub LAKE_MIRROW {
-    my ($self) = @_;
-
-    return $LAKE_MIRROW{ident $self};
-}
+my %game                :ATTR( :init_arg<game> );
+my %locations           :ATTR;
+my %route_nodes         :ATTR;
 
 sub width {
     my ($self) = @_;
@@ -170,10 +158,12 @@ sub START {
         }
     }
 
-    $TOWER_OF_DESPAIR{ident $self}  = $self->get_location(26, 4);
-    $XAJORKITH{ident $self}         = $self->get_location(45, 59);
-    $USHGARAK{ident $self}          = $self->get_location(29, 7);
-    $LAKE_MIRROW{ident $self}       = $self->get_location(9, 17);
+    $public_data{ident $self} = {
+        TOWER_OF_DESPAIR => $self->get_location(26, 4),
+        XAJORKITH        => $self->get_location(45, 59),
+        USHGARAK         => $self->get_location(29, 7),
+        LAKE_MIRROW      => $self->get_location(9, 17),
+    };
 
     my $route_nodes = $route_nodes{ident $self} = {};
     for my $i (0 .. @routes-1) {
