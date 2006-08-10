@@ -30,17 +30,17 @@ sub AUTOMETHOD {
 }
 
 
-my %map                     :ATTR( :get<map> :set<map>
-my %characters              :ATTR
-my %armies                  :ATTR
-my %doomguard               :ATTR
-my %day                     :ATTR( :get<day>
-my %moon_ring_controlled    :ATTR
-my %ice_crown_destroyed     :ATTR
-my %game_over               :ATTR
-my %status                  :ATTR
-my %battles                 :ATTR
-my %doomdarks_citadels      :ATTR
+my %map                     :ATTR( :get<map> :set<map> );
+my %characters              :ATTR( :get<characters> );
+my %armies                  :ATTR( :get<armies> );
+my %doomguard               :ATTR( :get<doomguard );
+my %day                     :ATTR( :get<day> );
+my %moon_ring_controlled    :ATTR;
+my %ice_crown_destroyed     :ATTR;
+my %game_over               :ATTR;
+my %status                  :ATTR( :get<status> );
+my %battles                 :ATTR;
+my %doomdarks_citadels      :ATTR( :get<doomdarks_citadels> );
 
 sub START {
     my ($self, $ident, $args) = @_;
@@ -231,33 +231,46 @@ sub check_game_over {
     }
 }
 
+sub get_battle_domains {
+}
 
+sub is_game_over {
+}
 
+sub save {
+}
 
+sub load {
+}
 
+sub load_characters {
+}
 
+sub save_characters {
+}
 
+sub load_garrisons {
+}
 
+sub save_garrisons {
+}
 
+sub load_doomguard {
+}
 
+sub save_doomguard {
+}
 
+sub init_characters {
+}
 
+sub init_armies {
+}
 
+sub init_doomguard {
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+sub random {
+}
 
 1;
