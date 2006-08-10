@@ -15,7 +15,7 @@ sub get_instance {
     my ($class) = @_;
 
     if (not $instance) {
-        $instance = SUPER->new({
+        $instance = $class->SUPER::new({
             game    => undef,
             x       => -1,
             y       => -1,
