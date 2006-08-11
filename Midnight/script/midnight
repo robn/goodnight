@@ -15,19 +15,67 @@ sub say (@) {
     print Text::Wrap::wrap('', '', @_), "\n";
 }
 
+my %commands_base = (
+    look     => \&cmd_look,
+    describe => \&cmd_describe,
+    local    => 1,
+);
+
+my (%commands, %conflicts);
+for my $key (keys %commands_base) {
+    my @bits = split '', $key;
+    my $cmd = "";
+    while (my $bit = shift @bits) {
+        $cmd .= $bit;
+        if (exists $commands{$cmd}) {
+            $conflicts{$cmd}->{$key} = 1;
+            $conflicts{$cmd}->{$commands{$cmd}} = 1;
+        }
+        else {
+            $commands{$cmd} = $key;
+        }
+    }
+}
+delete $commands{$_} for keys %conflicts;
+
+my $cmd_regex_str = "(?:" . join("|", sort keys %commands) . ")";
+my $cmd_regex = qr/$cmd_regex_str/i;
+
 my $game = Midnight::Game->new;
 my $map = $game->get_map;
 
 my $me = $game->LUXOR;
 
-my $looking = $map->get_looking_towards($me->get_location, $me->get_direction);
+cmd_look();
 
-say $me;
-say "He stands at " . $me->get_location .
-    " looking " . $me->get_direction .
-    " at $looking.";
+while (! $game->is_game_over) {
+    my $cmd;
+    while ($cmd = prompt "What now? ", -until => $cmd_regex) {
+        my $msg = "Sorry, I don't understand '$cmd'.";
 
-describe_location($me->get_location);
+        if (exists $conflicts{$cmd}) {
+            $msg .= " Did you mean: " . join(" ", sort keys %{$conflicts{$cmd}});
+        }
+
+        say $msg;
+    }
+
+    $commands_base{$commands{$cmd}}->();
+}
+
+sub cmd_look {
+    my $looking = $map->get_looking_towards($me->get_location, $me->get_direction);
+
+    say $me;
+    say "He stands at " . $me->get_location .
+        " looking " . $me->get_direction .
+        " at $looking.";
+    say $me->get_time;
+}
+
+sub cmd_describe {
+    describe_location($me->get_location);
+}
 
 sub describe_location {
     my ($location) = @_;
