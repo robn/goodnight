@@ -125,7 +125,7 @@ sub add_character {
     push @{$characters{ident $self}}, $character;
 
     if ($feature{ident $self} == Midnight::Location::Feature::PLAINS and
-        ($character->get_riders->get_how_many > 0 or $character->get_warriors_get_how_many > 0)) {
+        ($character->get_riders->get_how_many > 0 or $character->get_warriors->get_how_many > 0)) {
         $feature{ident $self} = Midnight::Location::Feature::ARMY;
     }
 }
