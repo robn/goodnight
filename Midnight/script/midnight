@@ -5,7 +5,15 @@ use strict;
 
 use Midnight::Game;
 
-use Perl6::Say;
+use IO::Prompt;
+require Text::Wrap;
+
+sub say (@) {
+    local $Text::Wrap::columns;
+    $Text::Wrap::columns = 80;
+
+    print Text::Wrap::wrap('', '', @_), "\n";
+}
 
 my $game = Midnight::Game->new;
 my $map = $game->get_map;
@@ -15,5 +23,5 @@ my $character = $game->LUXOR;
 my $looking = $map->get_looking_towards($character->get_location, $character->get_direction);
 
 say $character;
-say "He stands at " . $character->get_location;
-say "looking " . $character->get_direction . " at " . $looking;
+say "He stands at " . $character->get_location . " looking " . $character->get_direction . " at " . $looking;
+
