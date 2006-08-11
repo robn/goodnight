@@ -3,8 +3,13 @@ package Midnight::Game;
 use warnings;
 use strict;
 
+use Midnight::Army;
+use Midnight::Army::Type;
+use Midnight::Battle;
+use Midnight::Character;
 use Midnight::Doomguard;
 use Midnight::Game::Status;
+use Midnight::Location::Feature;
 use Midnight::Location::Object;
 use Midnight::Map;
 use Midnight::Map::Direction;
@@ -36,7 +41,7 @@ sub AUTOMETHOD {
 
 
 # assigned at end of file
-my (%character_defs);
+my (%character_defs, @army_defs, @doomguard_defs);
 
 my %map                     :ATTR( :get<map> :set<map> );
 my %characters              :ATTR( :get<characters> );
@@ -303,7 +308,7 @@ sub init_characters {
         my $facing = pop @def;
 
         my %def;
-        @def{qw(game id name title race x y life energy strength courage_base recruiting key recruited_by_key warriors riders)} = @def;
+        @def{qw(game id name title race x y life energy strength courage_base recruiting key recruited_by_key warriors riders)} = ($self->get_game, $id++, @def);
 
         my $character = Midnight::Character->new(\%def);
         $character->set_direction($facing);
@@ -325,9 +330,49 @@ sub init_characters {
 }
 
 sub init_armies {
+    my ($self) = @_;
+
+    for my $def (@army_defs) {
+        my @def = @{$def};
+
+        my $y = pop @def;
+        my $x = pop @def;
+
+        my %def;
+        @def{qw(game race how_many type)} = ($self->get_game, @def);
+
+        my $army = Midnight::Army->new(\%def);
+        $army->guard($x, $y);
+
+        push @{$armies{ident $self}}, $army;
+    }
 }
 
 sub init_doomguard {
+    my ($self) = @_;
+
+    for my $def (@doomguard_defs) {
+        my @def = @{$def};
+
+        my $y = pop @def;
+        my $x = pop @def;
+
+        my %def;
+        @def{qw(game energy how_many type orders target)} = ($self->get_game, @def);
+
+        if ($def{type} == Midnight::Doomguard::Orders::FOLLOW) {
+            $def{target} = $public_data{ident $self}->{$def{target}};
+        }
+        elsif ($def{type} == Midnight::Doomguard::Orders::ROUTE or
+               $def{type} == Midnight::Doomguard::Orders::GOTO) {
+            $def{target} = $self->get_map->get_route_node($def{target});
+        }
+
+        my $doomguard = Midnight::Doomguard->new(\%def);
+        $doomguard->guard($x, $y);
+
+        push @{$doomguard{ident $self}}, $doomguard;
+    }
 }
 
 sub random {
@@ -365,6 +410,242 @@ sub random {
     FAWKRIN => [ "Fawkrin", "Fawkrin the Skulkrin",  Midnight::Race::SKULKRIN, 1, 10,  200,  64,  1,  30,  0x00, 0x20, 0,  0, Midnight::Map::Direction::EAST ],
     LORGRIM => [ "Lorgrim", "Lorgrim the Wise",  Midnight::Race::WISE, 62, 0,  200,  64,  20,  70,  0x7f, 0x10, 0,  0, Midnight::Map::Direction::SOUTH ],
     FARFLAME => [ "Farflame", "Farflame the Dragonlord", Midnight::Race::DRAGON, 12, 23, 200, 64, 100, 127, 0x00, 0x40, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
+);
+
+@army_defs = (
+    [ Midnight::Race::FREE, 600, Midnight::Army::Type::WARRIORS, 8, 0 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::RIDERS, 46, 3 ],
+    [ Midnight::Race::FOUL, 400, Midnight::Army::Type::WARRIORS, 28, 4 ],
+    [ Midnight::Race::FOUL, 1000, Midnight::Army::Type::WARRIORS, 22, 5 ],
+    [ Midnight::Race::FOUL, 300, Midnight::Army::Type::RIDERS, 32, 6 ],
+    [ Midnight::Race::FOUL, 500, Midnight::Army::Type::WARRIORS, 23, 7 ],
+    [ Midnight::Race::FOUL, 1200, Midnight::Army::Type::RIDERS, 29, 7 ],
+    [ Midnight::Race::FOUL, 1100, Midnight::Army::Type::WARRIORS, 37, 7 ],
+    [ Midnight::Race::FOUL, 400, Midnight::Army::Type::RIDERS, 40, 8 ],
+    [ Midnight::Race::FREE, 300, Midnight::Army::Type::WARRIORS, 57, 8 ],
+    [ Midnight::Race::FOUL, 500, Midnight::Army::Type::WARRIORS, 39, 9 ],
+    [ Midnight::Race::FEY, 200, Midnight::Army::Type::WARRIORS, 11, 10 ],
+    [ Midnight::Race::FOUL, 300, Midnight::Army::Type::WARRIORS, 21, 11 ],
+    [ Midnight::Race::FOUL, 250, Midnight::Army::Type::WARRIORS, 25, 11 ],
+    [ Midnight::Race::FOUL, 1000, Midnight::Army::Type::RIDERS, 29, 12 ],
+    [ Midnight::Race::FOUL, 300, Midnight::Army::Type::RIDERS, 36, 12 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::RIDERS, 51, 12 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 62, 12 ],
+    [ Midnight::Race::FOUL, 200, Midnight::Army::Type::WARRIORS, 16, 13 ],
+    [ Midnight::Race::FREE, 300, Midnight::Army::Type::WARRIORS, 55, 13 ],
+    [ Midnight::Race::FREE, 700, Midnight::Army::Type::WARRIORS, 57, 15 ],
+    [ Midnight::Race::FOUL, 250, Midnight::Army::Type::WARRIORS, 14, 16 ],
+    [ Midnight::Race::FOUL, 500, Midnight::Army::Type::WARRIORS, 27, 16 ],
+    [ Midnight::Race::FOUL, 200, Midnight::Army::Type::WARRIORS, 34, 16 ],
+    [ Midnight::Race::FEY, 550, Midnight::Army::Type::WARRIORS, 42, 16 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::RIDERS, 52, 16 ],
+    [ Midnight::Race::FOUL, 250, Midnight::Army::Type::WARRIORS, 19, 17 ],
+    [ Midnight::Race::FOUL, 150, Midnight::Army::Type::WARRIORS, 22, 18 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 54, 18 ],
+    [ Midnight::Race::FOUL, 100, Midnight::Army::Type::WARRIORS, 14, 20 ],
+    [ Midnight::Race::FREE, 300, Midnight::Army::Type::WARRIORS, 49, 20 ],
+    [ Midnight::Race::FEY, 150, Midnight::Army::Type::WARRIORS, 57, 20 ],
+    [ Midnight::Race::FOUL, 900, Midnight::Army::Type::WARRIORS, 18, 21 ],
+    [ Midnight::Race::FOUL, 100, Midnight::Army::Type::WARRIORS, 42, 21 ],
+    [ Midnight::Race::FOUL, 350, Midnight::Army::Type::WARRIORS, 31, 22 ],
+    [ Midnight::Race::FREE, 400, Midnight::Army::Type::RIDERS, 46, 22 ],
+    [ Midnight::Race::FOUL, 250, Midnight::Army::Type::WARRIORS, 39, 23 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 56, 24 ],
+    [ Midnight::Race::FOUL, 200, Midnight::Army::Type::WARRIORS, 32, 25 ],
+    [ Midnight::Race::FREE, 300, Midnight::Army::Type::WARRIORS, 45, 26 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::RIDERS, 54, 26 ],
+    [ Midnight::Race::FOUL, 200, Midnight::Army::Type::RIDERS, 34, 27 ],
+    [ Midnight::Race::FOUL, 250, Midnight::Army::Type::WARRIORS, 17, 28 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 42, 28 ],
+    [ Midnight::Race::FOUL, 1000, Midnight::Army::Type::WARRIORS, 24, 29 ],
+    [ Midnight::Race::FOUL, 150, Midnight::Army::Type::WARRIORS, 30, 29 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::RIDERS, 51, 29 ],
+    [ Midnight::Race::FREE, 600, Midnight::Army::Type::RIDERS, 57, 29 ],
+    [ Midnight::Race::TARG, 200, Midnight::Army::Type::RIDERS, 55, 31 ],
+    [ Midnight::Race::FOUL, 300, Midnight::Army::Type::WARRIORS, 21, 32 ],
+    [ Midnight::Race::FOUL, 300, Midnight::Army::Type::WARRIORS, 23, 32 ],
+    [ Midnight::Race::FREE, 700, Midnight::Army::Type::WARRIORS, 43, 32 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 13, 33 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 34, 33 ],
+    [ Midnight::Race::FREE, 100, Midnight::Army::Type::RIDERS, 30, 34 ],
+    [ Midnight::Race::TARG, 350, Midnight::Army::Type::RIDERS, 59, 34 ],
+    [ Midnight::Race::FREE, 400, Midnight::Army::Type::WARRIORS, 21, 36 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 54, 38 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 27, 39 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 22, 40 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 25, 40 ],
+    [ Midnight::Race::FREE, 100, Midnight::Army::Type::WARRIORS, 48, 40 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::RIDERS, 42, 41 ],
+    [ Midnight::Race::FEY, 100, Midnight::Army::Type::RIDERS, 55, 41 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::RIDERS, 17, 42 ],
+    [ Midnight::Race::FREE, 750, Midnight::Army::Type::WARRIORS, 28, 42 ],
+    [ Midnight::Race::FREE, 100, Midnight::Army::Type::RIDERS, 37, 43 ],
+    [ Midnight::Race::FEY, 500, Midnight::Army::Type::WARRIORS, 59, 43 ],
+    [ Midnight::Race::FREE, 550, Midnight::Army::Type::WARRIORS, 44, 45 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 29, 46 ],
+    [ Midnight::Race::FREE, 100, Midnight::Army::Type::RIDERS, 42, 46 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 7, 47 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 10, 47 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 48, 48 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::RIDERS, 21, 49 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::RIDERS, 45, 49 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 54, 50 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 39, 51 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 42, 51 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 50, 51 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 46, 52 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 12, 54 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 25, 54 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 44, 54 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 55, 54 ],
+    [ Midnight::Race::FREE, 100, Midnight::Army::Type::RIDERS, 7, 55 ],
+    [ Midnight::Race::FREE, 600, Midnight::Army::Type::RIDERS, 10, 55 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 17, 56 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 21, 56 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 37, 56 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::WARRIORS, 8, 57 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 12, 57 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 39, 58 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 56, 58 ],
+    [ Midnight::Race::FREE, 150, Midnight::Army::Type::RIDERS, 63, 58 ],
+    [ Midnight::Race::FREE, 300, Midnight::Army::Type::WARRIORS, 42, 59 ],
+    [ Midnight::Race::FREE, 750, Midnight::Army::Type::RIDERS, 45, 59 ],
+    [ Midnight::Race::FREE, 50, Midnight::Army::Type::RIDERS, 4, 60 ],
+    [ Midnight::Race::FEY, 300, Midnight::Army::Type::RIDERS, 33, 60 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::RIDERS, 23, 60 ],
+    [ Midnight::Race::FREE, 250, Midnight::Army::Type::WARRIORS, 59, 60 ],
+    [ Midnight::Race::FREE, 200, Midnight::Army::Type::WARRIORS, 14, 60 ],
+);
+
+@doomguard_defs = (
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "LUXOR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "MORKIN", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "CORLETH", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "ROTHRON", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "GARD", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "MARAKITH", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "XAJORKITH", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "SHIMERIL", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "KUMAR", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "ITHRORN", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "DAWN", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "DREGRIM", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "THIMRATH", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "SHADOWS", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "THRALL", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "BRITH", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "RORATH", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "TRORN", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "MORNING", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "ATHORIL", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "BLOOD", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "HERATH", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "MITHARG", 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 3, 22, 5 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 3, 22, 5 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 3, 22, 5 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 3, 22, 5 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 7, 37, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 7, 37, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 7, 37, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 7, 37, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "MORKIN", 29, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::FOLLOW, "MORKIN", 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 14, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::ROUTE, 32, 18, 21 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 44, 24, 29 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 44, 24, 29 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 44, 24, 29 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::ROUTE, 44, 24, 29 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::WANDER, undef, 7, 21 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::WANDER, undef, 27, 16 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::WANDER, undef, 40, 8 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::WANDER, undef, 39, 23 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::WANDER, undef, 21, 32 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::WANDER, undef, 23, 32 ],
+    [ 0, 1000, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::WANDER, undef, 17, 28 ],
+    [ 0, 1000, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::WANDER, undef, 18, 3 ],
+    [ 0, 1000, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::WANDER, undef, 30, 29 ],
+    [ 0, 1000, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::WANDER, undef, 16, 13 ],
+    [ 0, 1000, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::WANDER, undef, 31, 22 ],
+    [ 0, 1000, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::WANDER, undef, 6, 37 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 29, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 29, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 22, 5 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 37, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 23, 7 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 28, 4 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 14, 25, 11 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 7, 36, 12 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 7, 40, 8 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 7, 39, 9 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 6, 32, 6 ],
+    [ 0, 1200, Midnight::Army::Type::WARRIORS, Midnight::Doomguard::Orders::GOTO, 3, 21, 11 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::GOTO, 6, 29, 9 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::GOTO, 6, 33, 7 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::GOTO, 6, 30, 6 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::GOTO, 6, 27, 6 ],
+    [ 0, 1000, Midnight::Army::Type::RIDERS, Midnight::Doomguard::Orders::GOTO, 6, 26, 7 ],
 );
 
 1;
