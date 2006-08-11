@@ -385,7 +385,7 @@ sub random {
     LUXOR => [ "Luxor", "Luxor the Moonprince", Midnight::Race::FREE, 12, 40, 180, 127, 25, 80, 0x17, 0x00, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
     MORKIN => [ "Morkin", "Morkin", Midnight::Race::MORKIN, 12, 40, 200, 127, 5, 127, 0x7e, 0x00, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
     CORLETH => [ "Corleth", "Corleth the Fey", Midnight::Race::FEY, 12, 40, 180, 127, 20, 96, 0x6b, 0x00, 0, 0, Midnight::Map::Direction::EAST ],
-    RORTHRON => [ "Rothron", "Rothron the Wise", Midnight::Race::WISE, 12, 40, 220, 127, 40, 80, 0x7f, 0x00, 0, 0, Midnight::Map::Direction::NORTHEAST ],
+    RORTHRON => [ "Rorthron", "Rorthron the Wise", Midnight::Race::WISE, 12, 40, 220, 127, 40, 80, 0x7f, 0x00, 0, 0, Midnight::Map::Direction::NORTHEAST ],
     GARD => [ "Gard", "the Lord of Gard", Midnight::Race::FREE, 10, 55, 150, 64, 10, 64, 0x01, 0x01, 500, 1000, Midnight::Map::Direction::EAST ],
     MARAKITH => [ "Marakith", "the Lord of Marakith", Midnight::Race::FREE, 43, 32, 150, 64, 10, 64, 0x01, 0x01, 500, 1000, Midnight::Map::Direction::WEST ],
     XAJORKITH => [ "Xajorkith", "the Lord of Xajorkith", Midnight::Race::FREE, 45, 59, 150, 64, 15, 64, 0x01, 0x01, 800, 1200, Midnight::Map::Direction::NORTH ],
