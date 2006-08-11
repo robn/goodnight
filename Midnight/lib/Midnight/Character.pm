@@ -31,7 +31,7 @@ my %killed              : ATTR( :get<killed> :set<killed> );
 my %battle              : ATTR( :get<battle> :set<battle> );
 my %on_horse            : ATTR( :set<on_horse> );
 my %recruiting_key      : ATTR( :get<recruiting_key> :init_arg<recruiting_key> );
-my %recruited_by_key    : ATTR( :get<recruited_by_key> :init_arg<recruted_by_key> );
+my %recruited_by_key    : ATTR( :get<recruited_by_key> :init_arg<recruited_by_key> );
 my %recruited           : ATTR( :set<recruited> );
 my %hidden              : ATTR( :set<hidden> );
 
