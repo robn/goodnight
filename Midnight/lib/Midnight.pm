@@ -3,27 +3,10 @@ package Midnight;
 use warnings;
 use strict;
 
-use Class::Std;
+use Carp qw(croak);
 
-my %map                 : ATTR ( :get<map> );
-my %characters          : ATTR;
-my %armies              : ATTR;
-my %doomguard           : ATTR;
-my %day                 : ATTR;
-my %moonring_controlled : ATTR;
-my %ice_crown_destroyed : ATTR;
-my %game_over           : ATTR;
-my %status              : ATTR;
-my %battles             : ATTR;
-my %doomdarks_citadel   : ATTR;
-
-sub BUILD {
-    my ($self, $ident, $args) = @_;
-
-    $map{$ident} = Midnight::Map->new({ game => $self });
-
-    $day{$ident} = 0;
-    $moonring_controlled{$ident} = 1;
+BEGIN {
+    croak "use'ing Midnight directly isn't supported yet.\n For now, try 'use Midnight::Game' instead\n";
 }
 
 1;
