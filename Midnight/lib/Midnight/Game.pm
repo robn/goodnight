@@ -308,7 +308,7 @@ sub init_characters {
         my $facing = pop @def;
 
         my %def;
-        @def{qw(game id name title race x y life energy strength courage_base recruiting key recruited_by_key warriors riders)} = ($self->get_game, $id++, @def);
+        @def{qw(game id name title race x y life energy strength courage_base recruiting_key recruited_by_key warriors riders)} = ($self, $id++, @def);
 
         my $character = Midnight::Character->new(\%def);
         $character->set_direction($facing);
@@ -339,7 +339,7 @@ sub init_armies {
         my $x = pop @def;
 
         my %def;
-        @def{qw(game race how_many type)} = ($self->get_game, @def);
+        @def{qw(game race how_many type)} = ($self, @def);
 
         my $army = Midnight::Army->new(\%def);
         $army->guard($x, $y);
@@ -358,7 +358,7 @@ sub init_doomguard {
         my $x = pop @def;
 
         my %def;
-        @def{qw(game energy how_many type orders target)} = ($self->get_game, @def);
+        @def{qw(game energy how_many type orders target)} = ($self, @def);
 
         if ($def{type} == Midnight::Doomguard::Orders::FOLLOW) {
             $def{target} = $public_data{ident $self}->{$def{target}};
