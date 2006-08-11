@@ -9,7 +9,7 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Midnight.pm',
     requires => {
         'Class::Std' => 0,
-        'Class::Constant' => '0.03',
+        'Class::Constant' => '0.04',
     },
     build_requires => {
         'Test::More' => 0,
