@@ -21,14 +21,16 @@ my %id                  : ATTR;
 
 my $next_id = 1;
 
-sub BUILD {
-    my ($self, $ident, $args) = @_;
-
-    $args->{race} = Midnight::Race::FOUL;
-}
+#sub BUILD {
+#    my ($self, $ident, $args) = @_;
+#
+#    $args->{race} = Midnight::Race::FOUL;
+#}
 
 sub START {
     my ($self, $ident, $args) = @_;
+
+    $self->set_race(Midnight::Race::FOUL);
 
     $id{$ident} = $next_id++;
 }
