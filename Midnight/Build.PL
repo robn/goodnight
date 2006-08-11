@@ -14,6 +14,7 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::More' => 0,
     },
+    script_files => [ "script/midnight" ],
     add_to_cleanup      => [ 'Midnight-*' ],
 );
 
