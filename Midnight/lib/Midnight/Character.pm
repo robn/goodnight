@@ -11,6 +11,7 @@ use Midnight::Location::Feature;
 use Midnight::Location::Object;
 use Midnight::Map::Direction;
 use Midnight::Race;
+use Midnight::Time;
 
 use Class::Std;
 
