@@ -376,6 +376,9 @@ sub init_doomguard {
 }
 
 sub random {
+    my ($self, $max) = @_;
+
+    return int(rand($max));
 }
 
 %character_defs = (
