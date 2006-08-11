@@ -6,6 +6,7 @@ use strict;
 use Midnight::Game;
 
 use IO::Prompt;
+use Lingua::EN::Inflect qw(PL PL_V);
 
 require Text::Wrap;
 sub say (@) {
@@ -71,6 +72,13 @@ sub cmd_look {
         " looking " . $me->get_direction .
         " at $looking.";
     say $me->get_time;
+
+    my @characters = grep { $_ != $me } @{$me->get_location->get_characters};
+    my $count = @characters;
+    if ($count > 0) {
+        say "There ".PL_V("is", $count)." $count ".PL("person", $count)." here: ".
+            join(" ", sort map { $_->get_name } @characters);
+    }
 }
 
 sub cmd_describe {
