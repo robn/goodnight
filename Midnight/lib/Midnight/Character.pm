@@ -38,6 +38,20 @@ my %hidden              : ATTR( :set<hidden> );
 sub START {
     my ($self, $ident, $args) = @_;
 
+    $warriors{$ident} = Midnight::Army->new({
+        game        => $self->get_game,
+        race        => $self->get_race,
+        how_many    => $args->{warriors},
+        type        => Midnight::Army::Type::WARRIORS,
+    });
+    $riders{$ident} = Midnight::Army->new({
+        game        => $self->get_game,
+        race        => $self->get_race,
+        how_many    => $args->{riders},
+        type        => Midnight::Army::Type::RIDERS,
+    });
+
+    $self->set_location($self->get_game->get_map->get_location($args->{x}, $args->{y}));
     $direction{$ident} = Midnight::Map::Direction::NORTH;
 
     $time{$ident} = Midnight::Time->new;
