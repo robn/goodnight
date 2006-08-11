@@ -6,8 +6,8 @@ use strict;
 use Midnight::Game;
 
 use IO::Prompt;
-require Text::Wrap;
 
+require Text::Wrap;
 sub say (@) {
     local $Text::Wrap::columns;
     $Text::Wrap::columns = 80;
@@ -18,10 +18,50 @@ sub say (@) {
 my $game = Midnight::Game->new;
 my $map = $game->get_map;
 
-my $character = $game->LUXOR;
+my $me = $game->LUXOR;
 
-my $looking = $map->get_looking_towards($character->get_location, $character->get_direction);
+my $looking = $map->get_looking_towards($me->get_location, $me->get_direction);
 
-say $character;
-say "He stands at " . $character->get_location . " looking " . $character->get_direction . " at " . $looking;
+say $me;
+say "He stands at " . $me->get_location .
+    " looking " . $me->get_direction .
+    " at $looking.";
+
+describe_location($me->get_location);
+
+sub describe_location {
+    my ($location) = @_;
+
+    my $guard = $location->get_guard;
+    if($guard) {
+        say "$guard of the " . $guard->get_race . " guard the " . $location->get_feature . ".";
+    }
+
+    for my $c (@{$location->get_characters}) {
+        next if $c == $me;
+
+        my $line = "$c is here.";
+
+        my $warriors = $c->get_warriors;
+        my $riders = $c->get_riders;
+
+        if ($warriors->get_how_many > 0 or $riders->get_how_many > 0) {
+            $line .= " He commands ";
+
+            if ($warriors->get_how_many > 0 and $riders->get_how_many > 0) {
+                $line .= "$warriors and $riders";
+            }
+            elsif ($warriors->get_how_many > 0) {
+                $line .= $warriors;
+            }
+            elsif ($riders->get_how_many > 0) {
+                $line .= $riders;
+            }
+            
+            $line .= " of the " . $c->get_race . ".";
+        }
+
+        say $line;
+    }
+}
 
