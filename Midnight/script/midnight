@@ -3,6 +3,17 @@
 use warnings;
 use strict;
 
-use lib './lib';
-
 use Midnight::Game;
+
+use Perl6::Say;
+
+my $game = Midnight::Game->new;
+my $map = $game->get_map;
+
+my $character = $game->LUXOR;
+
+my $looking = $map->get_looking_towards($character->get_location, $character->get_direction);
+
+say $character;
+say "He stands at " . $character->get_location;
+say "looking " . $character->get_direction . " at " . $looking;

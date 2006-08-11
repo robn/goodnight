@@ -360,11 +360,11 @@ sub init_doomguard {
         my %def;
         @def{qw(game energy how_many type orders target)} = ($self, @def);
 
-        if ($def{type} == Midnight::Doomguard::Orders::FOLLOW) {
+        if ($def{orders} == Midnight::Doomguard::Orders::FOLLOW) {
             $def{target} = $public_data{ident $self}->{$def{target}};
         }
-        elsif ($def{type} == Midnight::Doomguard::Orders::ROUTE or
-               $def{type} == Midnight::Doomguard::Orders::GOTO) {
+        elsif ($def{orders} == Midnight::Doomguard::Orders::ROUTE or
+               $def{orders} == Midnight::Doomguard::Orders::GOTO) {
             $def{target} = $self->get_map->get_route_node($def{target});
         }
 

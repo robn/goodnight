@@ -71,7 +71,7 @@ sub guard {
     }
     else {
         my ($x, $y) = @_;
-        $location = $self->get_game->get_location($x, $y);
+        $location = $self->get_game->get_map->get_location($x, $y);
     }
 
     $self->set_location($location);
