@@ -3,7 +3,12 @@ package Midnight::Game;
 use warnings;
 use strict;
 
+use Midnight::Doomguard;
+use Midnight::Game::Status;
+use Midnight::Location::Object;
 use Midnight::Map;
+use Midnight::Map::Direction;
+use Midnight::Race;
 
 use Class::Std;
 
@@ -29,6 +34,9 @@ sub AUTOMETHOD {
     };
 }
 
+
+# assigned at end of file
+my (%character_defs);
 
 my %map                     :ATTR( :get<map> :set<map> );
 my %characters              :ATTR( :get<characters> );
@@ -184,7 +192,7 @@ sub calc_night_activity {
         }
     }
 
-    for my $army (@{$doomguard{ident $self}}) {
+    for my $doomguard (@{$doomguard{ident $self}}) {
         while ($doomguard->get_move_count < Midnight::Doomguard::MAX_MOVE_COUNT) {
             $doomguard->execute_move;
         }
@@ -193,12 +201,24 @@ sub calc_night_activity {
 
     for my $character (@{$characters{ident $self}}) {
         my $location = $character->get_location;
-        $character->get_location->set_special(0);
+        $location->set_special(0);
         if ((@{$location->get_armies} > 0 or
                 (not $location->get_guard and
                  $location->get_guard->get_race == Midnight::Race::FOUL)) and
-            not exists $battles{ident $self}->{ident $army->get_location}) {
-            $battles{ident $self}->{ident $army->get_location}, Midnight::Battle->new($army->get_location);
+            not exists $battles{ident $self}->{ident $location}) {
+            $battles{ident $self}->{ident $location} = Midnight::Battle->new({location => $location});
+        }
+    }
+            
+    for my $army (@{$armies{ident $self}}) {
+        if ($army->get_race == Midnight::Race::FOUL) {
+            my $location = $army->get_location;
+            $location->set_special(0);
+            if (@{$location->get_armies} > 0 and
+                not exists $battles{ident $self}->{ident $location}) {
+                $battles{ident $self}->{ident $location} =
+                    Midnight::Battle->new({location => $location});
+            }
         }
     }
 
@@ -232,9 +252,21 @@ sub check_game_over {
 }
 
 sub get_battle_domains {
+    my ($self) = @_;
+
+    my %domains;
+    for my $battle (@{$self->get_battles}) {
+        my $domain = $battle->get_location->get_domain;
+        $domains{ident $domain} = $domain;
+    }
+
+    return \(values %domains);
 }
 
 sub is_game_over {
+    my ($self) = @_;
+
+    return $game_over{ident $self};
 }
 
 sub save {
@@ -262,6 +294,34 @@ sub save_doomguard {
 }
 
 sub init_characters {
+    my ($self) = @_;
+
+    my $id = 0;
+    for my $key (keys %character_defs) {
+        my @def = @{$character_defs{$key}};
+
+        my $facing = pop @def;
+
+        my %def;
+        @def{qw(game id name title race x y life energy strength courage_base recruiting key recruited_by_key warriors riders)} = @def;
+
+        my $character = Midnight::Character->new(\%def);
+        $character->set_direction($facing);
+
+        $public_data{ident $self}->{$key} = $character;
+    }
+
+    $self->SHADOWS->set_on_horse(0);
+    $self->KORINEL->set_on_horse(0);
+
+    $self->LUXOR->set_recruited(1);
+    $self->MORKIN->set_recruited(1);
+    $self->CORLETH->set_recruited(1);
+    $self->RORTHRON->set_recruited(1);
+
+    $self->LUXOR->set_object(Midnight::Location::Object::MOON_RING);
+
+    push @{$characters{ident $self}}, $_ for values %{$public_data{ident $self}};
 }
 
 sub init_armies {
@@ -272,5 +332,39 @@ sub init_doomguard {
 
 sub random {
 }
+
+%character_defs = (
+    LUXOR => [ "Luxor", "Luxor the Moonprince", Midnight::Race::FREE, 12, 40, 180, 127, 25, 80, 0x17, 0x00, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
+    MORKIN => [ "Morkin", "Morkin", Midnight::Race::MORKIN, 12, 40, 200, 127, 5, 127, 0x7e, 0x00, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
+    CORLETH => [ "Corleth", "Corleth the Fey", Midnight::Race::FEY, 12, 40, 180, 127, 20, 96, 0x6b, 0x00, 0, 0, Midnight::Map::Direction::EAST ],
+    ROTHRON => [ "Rothron", "Rothron the Wise", Midnight::Race::WISE, 12, 40, 220, 127, 40, 80, 0x7f, 0x00, 0, 0, Midnight::Map::Direction::NORTHEAST ],
+    GARD => [ "Gard", "the Lord of Gard", Midnight::Race::FREE, 10, 55, 150, 64, 10, 64, 0x01, 0x01, 500, 1000, Midnight::Map::Direction::EAST ],
+    MARAKITH => [ "Marakith", "the Lord of Marakith", Midnight::Race::FREE, 43, 32, 150, 64, 10, 64, 0x01, 0x01, 500, 1000, Midnight::Map::Direction::WEST ],
+    XAJORKITH => [ "Xajorkith", "the Lord of Xajorkith", Midnight::Race::FREE, 45, 59, 150, 64, 15, 64, 0x01, 0x01, 800, 1200, Midnight::Map::Direction::NORTH ],
+    GLOOM => [ "Gloom", "the Lord of Gloom", Midnight::Race::FREE, 8, 0, 150, 64, 15, 56, 0x01, 0x01, 500, 1000, Midnight::Map::Direction::EAST ],
+    SHIMERIL => [ "Shimeril", "the Lord of Shimeril", Midnight::Race::FREE, 28, 42, 150, 64, 15, 64, 0x01, 0x01, 800, 1000, Midnight::Map::Direction::NORTHWEST ],
+    KUMAR => [ "Kumar", "the Lord of Kumar", Midnight::Race::FREE, 57, 29, 150, 64, 10, 64, 0x01, 0x01, 700, 1000, Midnight::Map::Direction::NORTH ],
+    DAWN => [ "Dawn", "the Lord of Dawn", Midnight::Race::FREE, 44, 45, 150, 64, 8, 48, 0x01, 0x01, 500, 800, Midnight::Map::Direction::NORTH ],
+    DREAMS => [ "Dreams", "the Lord Of Dreams", Midnight::Race::FEY, 42, 16, 180 , 64,  20,  90,  0x1f, 0x08, 800,  1200, Midnight::Map::Direction::NORTH ],
+    DREGRIM => [ "Dregrim", "the Lord Of Dregrim", Midnight::Race::FEY, 59, 43, 150,  64,  15,  80,  0x1f, 0x08, 400,  1000, Midnight::Map::Direction::NORTH ],
+    THIMRATH => [ "Thimrath", "Thimrath the Fey",  Midnight::Race::FEY, 33, 60, 130,  64,  12,  90,  0x1a, 0x02, 600,  400, Midnight::Map::Direction::WEST ],
+    WHISPERS => [ "Whispers", "the Lord Of Whispers",  Midnight::Race::FEY, 57, 20, 150,  64,  12,  80,  0x1a, 0x02, 300,  600, Midnight::Map::Direction::NORTHWEST ],
+    SHADOWS => [ "Shadows", "the Lord Of Shadows", Midnight::Race::FEY, 11, 37, 130,  64,  12,  70,  0x1a, 0x02, 0,  1000, Midnight::Map::Direction::NORTH ],
+    LOTHORIL => [ "Lothoril", "the Lord Of Lothoril",  Midnight::Race::FEY, 11, 10,  100,  64,  8,  60,  0x1a, 0x02, 200,  500, Midnight::Map::Direction::EAST ],
+    KORINEL => [ "Korinel", "Korinel the Fey", Midnight::Race::FEY, 23, 21,  120,  64,  12,  60,  0x1a, 0x02, 0,  1000, Midnight::Map::Direction::NORTH ],
+    THRALL => [ "Thrall", "the Lord Of Thrall",  Midnight::Race::FEY, 33, 38,  150,  64,  10,  70,  0x1a, 0x02, 300,  600, Midnight::Map::Direction::NORTHWEST ],
+    BRITH => [ "Brith", "Lord Brith", Midnight::Race::FREE, 21, 49,  100,  64,  8,  40,  0x01, 0x01, 500,  300, Midnight::Map::Direction::NORTHEAST ],
+    RORATH => [ "Rorath", "Lord Rorath",  Midnight::Race::FREE, 23, 60,  100,  64,  8,  50,  0x01, 0x01, 800,  400, Midnight::Map::Direction::NORTH ],
+    TRORN => [ "Trorn", "Lord Trorn", Midnight::Race::FREE, 54, 50,  100,  64,  8,  35,  0x01, 0x01, 400,  800, Midnight::Map::Direction::NORTHWEST ],
+    MORNING => [ "Morning", "the Lord Of Morning",  Midnight::Race::FREE, 39, 51,  120,  64,  8,  40,  0x01, 0x01, 300,  800, Midnight::Map::Direction::NORTH ],
+    ATHORIL => [ "Athoril", "Lord Athoril", Midnight::Race::FREE, 54, 38,  120,  64,  8,  50,  0x01, 0x01, 800,  300, Midnight::Map::Direction::NORTH ],
+    BLOOD => [ "Blood", "Lord Blood",  Midnight::Race::FREE, 21, 36,  150,  64,  15,  80,  0x01, 0x01, 1200,  0, Midnight::Map::Direction::NORTH ],
+    HERATH => [ "Herath", "Lord Herath",  Midnight::Race::FREE, 45, 26,  130,  64,  8,  40,  0x01, 0x01, 500,  600, Midnight::Map::Direction::NORTHEAST ],
+    MITHARG => [ "Mitharg", "Lord Mitharg",  Midnight::Race::FREE, 29, 46,  130,  64,  8,  50,  0x01, 0x01, 500,  600, Midnight::Map::Direction::NORTH ],
+    UTARG => [ "Utarg", "the Utarg Of Utarg",  Midnight::Race::TARG, 59, 34,  180,  64,  20,  80,  0x00, 0x04, 1000,  0, Midnight::Map::Direction::WEST ],
+    FAWKRIN => [ "Fawkrin", "Fawkrin the Skulkrin",  Midnight::Race::SKULKRIN, 1, 10,  200,  64,  1,  30,  0x00, 0x20, 0,  0, Midnight::Map::Direction::EAST ],
+    LORGRIM => [ "Lorgrim", "Lorgrim the Wise",  Midnight::Race::WISE, 62, 0,  200,  64,  20,  70,  0x7f, 0x10, 0,  0, Midnight::Map::Direction::SOUTH ],
+    FARFLAME => [ "Farflame", "Farflame the Dragonlord", Midnight::Race::DRAGON, 12, 23, 200, 64, 100, 127, 0x00, 0x40, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
+);
 
 1;
