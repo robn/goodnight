@@ -29,7 +29,7 @@ sub set_energy {
     $energy = MAX_ENERGY if $energy > MAX_ENERGY;
 
     $energy{ident $self} = $energy;
-    $condition{ident $self} = Midnight::Unit::Condition->by_ordinal($energy << 4);
+    $condition{ident $self} = Midnight::Unit::Condition->by_ordinal($energy >> 4);
 }
 
 sub increment_energy {
