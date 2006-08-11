@@ -63,7 +63,7 @@ sub as_string {
     }
 
     my $feature_string = "$feature";
-    $feature_string =~ s/^[a-z]/uc($1)/e;
+    $feature_string =~ s/^([a-z])/uc($1)/e;
     return "the $feature_string of $area";
 }
 

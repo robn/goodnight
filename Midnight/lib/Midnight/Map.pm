@@ -50,7 +50,7 @@ sub height {
 sub get_location {
     my ($self, $x, $y) = @_;
 
-    if ($x < 0 or $y > 0 or
+    if ($x < 0 or $y < 0 or
         $x >= @{$locations{ident $self}} or $y >= @{$locations{ident $self}->[0]}) {
         return Midnight::Location::FrozenWaste->get_instance;
     }
