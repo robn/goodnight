@@ -19,7 +19,7 @@ sub say (@) {
 my %commands_base = (
     look     => \&cmd_look,
     describe => \&cmd_describe,
-    local    => 1,
+    forward  => \&cmd_forward,
 );
 
 my (%commands, %conflicts);
@@ -65,6 +65,24 @@ while (! $game->is_game_over) {
 }
 
 sub cmd_look {
+    look();
+}
+
+sub cmd_describe {
+    describe_location($me->get_location);
+}
+
+sub cmd_forward {
+    if ($me->can_walk_forward) {
+        $me->walk_forward;
+        look();
+    }
+    else {
+        say "He can't go that way!";
+    }
+}
+
+sub look {
     my $looking = $map->get_looking_towards($me->get_location, $me->get_direction);
 
     say $me;
@@ -79,10 +97,6 @@ sub cmd_look {
         say "There ".PL_V("is", $count)." $count ".PL("person", $count)." here: ".
             join(" ", sort map { $_->get_name } @characters);
     }
-}
-
-sub cmd_describe {
-    describe_location($me->get_location);
 }
 
 sub describe_location {
