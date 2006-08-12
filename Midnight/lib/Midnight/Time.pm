@@ -71,9 +71,9 @@ sub as_string {
 
     return
         $lt .
-        ($time{ident $self} / 2 + 1) .
-        " hour" . (($time{ident $self} < 3) ? "" : "s") .
-        "of the day remain";
+        int($time{ident $self} / 2 + 1) .
+        " hour" . (($time{ident $self} < 3) ? "" : "s") . " " .
+        "of the day remain.";
 };
 
 use overload q{""} => \&as_string;
