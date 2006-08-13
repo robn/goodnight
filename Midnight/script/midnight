@@ -17,34 +17,34 @@ sub say (@) {
 }
 
 my %command_defs = (
-    look        => { look => [] },
+    look        => { look => [qw(where ahead time)] },
     who         => { look => [qw(who)] },
     stats       => { look => [qw(stats)] },
 
     left        => { call => sub { turn("left") },
-                     look => [qw(where ahead)] },
+                     look => [] },
     right       => { call => sub { turn("right") },
-                     look => [qw(where ahead)] },
+                     look => [] },
 
     north       => { call => sub { face(Midnight::Map::Direction::NORTH) },
-                     look => [qw(where ahead)] },
+                     look => [] },
     northeast   => { call => sub { face(Midnight::Map::Direction::NORTHEAST) },
-                     look => [qw(where ahead)] },
+                     look => [] },
     east        => { call => sub { face(Midnight::Map::Direction::EAST) },
-                     look => [qw(where ahead)] },
+                     look => [] },
     southeast   => { call => sub { face(Midnight::Map::Direction::SOUTHEAST) },
-                     look => [qw(where ahead)] },
+                     look => [] },
     south       => { call => sub { face(Midnight::Map::Direction::SOUTH) },
-                     look => [qw(where ahead)] },
+                     look => [] },
     southwest   => { call => sub { face(Midnight::Map::Direction::SOUTHWEST) },
-                     look => [qw(where ahead)] },
+                     look => [] },
     west        => { call => sub { face(Midnight::Map::Direction::WEST) },
-                     look => [qw(where ahead)] },
+                     look => [] },
     northwest   => { call => sub { face(Midnight::Map::Direction::NORTHWEST) },
-                     look => [qw(where ahead)] },
+                     look => [] },
 
     forward     => { call => \&forward,
-                     look => [] },
+                     look => [qw(where ahead time)] },
 
     seek        => { look => [qw(seek)] },
 
@@ -102,7 +102,7 @@ my $map = $game->get_map;
 
 my $me = $game->LUXOR;
 
-look();
+look(qw(where ahead time));
 
 while (! $game->is_game_over) {
     my $cmd;
@@ -145,7 +145,7 @@ sub look {
     }
 
     my @want = @_;
-    @want = qw(where ahead time) if @want == 0;
+    @want = qw(where ahead) if @want == 0;
     my %want = map { $_ => 1 } @want;
 
     my $location = $me->get_location;
