@@ -4,21 +4,21 @@ use warnings;
 use strict;
 
 use Class::Constant
-    MOUNTAIN     => "mountains",
-    CITADEL      => "citadel",
-    FOREST       => "forest",
-    HENGE        => "henge",
-    TOWER        => "tower",
-    VILLAGE      => "village",
-    DOWNS        => "downs",
-    KEEP         => "keep",
-    SNOWHALL     => "snowhall",
-    LAKE         => "lake",
-    FROZEN_WASTE => "frozen wastes",
-    RUIN         => "ruin",
-    LITH         => "lith",
-    CAVERN       => "cavern",
-    ARMY         => "plains",
-    PLAINS       => "plains";
+    MOUNTAIN     => "mountains",     { at => "in" },
+    CITADEL      => "citadel",       { at => "at" },
+    FOREST       => "forest",        { at => "in" },
+    HENGE        => "henge",         { at => "at" },
+    TOWER        => "tower",         { at => "at" },
+    VILLAGE      => "village",       { at => "at" },
+    DOWNS        => "downs",         { at => "on" },
+    KEEP         => "keep",          { at => "at" },
+    SNOWHALL     => "snowhall",      { at => "at" },
+    LAKE         => "lake",          { at => "at" },
+    FROZEN_WASTE => "frozen wastes", { at => "in" },
+    RUIN         => "ruin",          { at => "at" },
+    LITH         => "lith",          { at => "at" },
+    CAVERN       => "cavern",        { at => "at" },
+    ARMY         => "plains",        { at => "on" },
+    PLAINS       => "plains",        { at => "on" };
 		
 1;
