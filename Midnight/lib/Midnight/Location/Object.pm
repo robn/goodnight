@@ -46,7 +46,7 @@ sub as_string {
 
     my $msg = "guidance. A voice says: '";
     my $rnd = $location->get_game->random(32);
-    if ($rnd > 4) {
+    if ($rnd >= 4) {
         my $character = $location->get_game->get_characters->[$rnd];
 
         $msg .= "Looking for $character you must seek ".$character->get_location."'";
