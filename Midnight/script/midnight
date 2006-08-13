@@ -327,7 +327,10 @@ sub fight {
 }
 
 sub commands {
-    say "Available commands: " . join(" ", sort keys %command_defs);
+    my %sc;
+    push @{$sc{$command_shortcuts{$_}}}, $_ for keys %command_shortcuts;
+
+    say "Available commands: " . join(" ", map { $_ . (exists $sc{$_} ? (" [" . join(" ", @{$sc{$_}}) . "]") : "") } sort keys %command_defs);
 }
 
 sub quit {
