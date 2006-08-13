@@ -83,12 +83,16 @@ sub cmd_forward {
 }
 
 sub look {
-    my $looking = $map->get_looking_towards($me->get_location, $me->get_direction);
+    my $location = $me->get_location;
+    my $direction = $me->get_direction;
+
+    my $looking = $map->get_looking_towards($location, $direction);
 
     say $me;
-    say "He stands at " . $me->get_location .
-        " looking " . $me->get_direction .
-        " at $looking.";
+    say "He stands at $location looking $direction at $looking.";
+    say "He is " . $me->get_condition . ".";
+    say "The ice fear is " . $location->describe_ice_fear . ". " .
+        $me->get_name . " is " . $me->get_courage . ".";
     say $me->get_time;
 
 #    my @characters = grep { $_ != $me } @{$me->get_location->get_characters};
