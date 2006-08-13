@@ -16,13 +16,13 @@ use Class::Constant
 sub turn_right {
     my ($direction) = @_;
 
-    return $direction->by_ordinal($direction->get_ordinal + 1 % 8);
+    return $direction->by_ordinal(($direction->get_ordinal + 1) % 8);
 }
 
 sub turn_left {
     my ($direction) = @_;
 
-    return $direction->by_ordinal($direction->get_ordinal - 1 % 8);
+    return $direction->by_ordinal(($direction->get_ordinal - 1) % 8);
 }
 
 sub is_diagonal {
