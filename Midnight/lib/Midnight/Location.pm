@@ -13,7 +13,7 @@ my %game        : ATTR( :get<game> :init_arg<game> );
 my %x           : ATTR( :get<x> :init_arg<x> );
 my %y           : ATTR( :get<y> :init_arg<y> );
 my %feature     : ATTR( :get<feature> :init_arg<feature> );
-my %object      : ATTR( :get<object> :init_arg<object> );
+my %object      : ATTR( :name<object> );
 my %area        : ATTR( :get<domain> :init_arg<area> );
 my %domain      : ATTR( :get<domain_flag> :init_arg<domain> );
 my %special     : ATTR( :init_arg<special> );
