@@ -237,8 +237,8 @@ sub face {
 }
 
 sub walk {
-    if ($me->can_walk_walk) {
-        $me->walk_walk;
+    if ($me->can_walk_forward) {
+        $me->walk_forward;
         return;
     }
 
