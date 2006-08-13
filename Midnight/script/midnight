@@ -16,29 +16,57 @@ sub say (@) {
     print Text::Wrap::wrap('', '', @_), "\n";
 }
 
-my %commands_base = (
-    commands    => \&cmd_commands,
+my %command_defs = (
+    commands    => { call => \&commands },
 
-    look        => \&cmd_look,
-    describe    => \&cmd_describe,
+    quit        => { call => \&quit },
+    exit        => { call => \&quit },
 
-    forward     => \&cmd_forward,
+    look        => { look => 1 },
+    examine     => { examine => 1 },
 
-    left        => sub { turn("left") },
-    right       => sub { turn("right") },
+    forward     => { call => \&forward,
+                     look => 1 },
 
-    north       => sub { face(Midnight::Map::Direction::NORTH) },
-    northeast   => sub { face(Midnight::Map::Direction::NORTHEAST) },
-    east        => sub { face(Midnight::Map::Direction::EAST) },
-    southeast   => sub { face(Midnight::Map::Direction::SOUTHEAST) },
-    south       => sub { face(Midnight::Map::Direction::SOUTH) },
-    southwest   => sub { face(Midnight::Map::Direction::SOUTHWEST) },
-    west        => sub { face(Midnight::Map::Direction::WEST) },
-    northwest   => sub { face(Midnight::Map::Direction::NORTHWEST) },
+    left        => { call => sub { turn("left") },
+                     look => 1 },
+    right       => { call => sub { turn("right") },
+                     look => 1 },
+
+    north       => { call => sub { face(Midnight::Map::Direction::NORTH) },
+                     look => 1 },
+    northeast   => { call => sub { face(Midnight::Map::Direction::NORTHEAST) },
+                     look => 1 },
+    east        => { call => sub { face(Midnight::Map::Direction::EAST) },
+                     look => 1 },
+    southeast   => { call => sub { face(Midnight::Map::Direction::SOUTHEAST) },
+                     look => 1 },
+    south       => { call => sub { face(Midnight::Map::Direction::SOUTH) },
+                     look => 1 },
+    southwest   => { call => sub { face(Midnight::Map::Direction::SOUTHWEST) },
+                     look => 1 },
+    west        => { call => sub { face(Midnight::Map::Direction::WEST) },
+                     look => 1 },
+    northwest   => { call => sub { face(Midnight::Map::Direction::NORTHWEST) },
+                     look => 1 },
+);
+
+my %command_shortcuts = (
+    q   => "quit",
+    l   => "look",
+    x   => "examine",
+    n   => "north",
+    ne  => "northeast",
+    e   => "east",
+    se  => "southeast",
+    s   => "south",
+    sw  => "southwest",
+    w   => "west",
+    nw  => "northwest",
 );
 
 my (%commands, %conflicts);
-for my $key (keys %commands_base) {
+for my $key (keys %command_defs) {
     my @bits = split '', $key;
     pop @bits;
 
@@ -55,7 +83,8 @@ for my $key (keys %commands_base) {
     }
 }
 delete $commands{$_} for keys %conflicts;
-map { $commands{$_} = $_; delete $conflicts{$_} } keys %commands_base;
+map { $commands{$_} = $_; delete $conflicts{$_} } keys %command_defs;
+map { $commands{$_} = $command_shortcuts{$_}; delete $conflicts{$_} } keys %command_shortcuts;
 
 my $cmd_regex_str = "(?:" . join("|", sort keys %commands) . ")";
 my $cmd_regex = qr/^$cmd_regex_str$/i;
@@ -78,50 +107,22 @@ while (! $game->is_game_over) {
         }
     }
 
-    $commands_base{$commands{$cmd}}->();
-}
+    my $defs = $command_defs{$commands{$cmd}};
 
-sub cmd_commands {
-    say "Available commands: " . join(" ", sort keys %commands_base);
-}
+    if (exists $defs->{call}) {
+        $defs->{call}->();
+    }
 
-sub cmd_look {
-    look();
-}
-
-sub cmd_describe {
-    describe_location($me->get_location);
-}
-
-sub cmd_forward {
-    if ($me->can_walk_forward) {
-        $me->walk_forward;
+    if (exists $defs->{examine}) {
+        examine();
+    }
+    elsif (exists $defs->{look}) {
         look();
-    }
-    else {
-        say "He can't go that way!";
-    }
+    }   
 }
 
-sub turn {
-    my ($turn) = @_;
-
-    if ($turn eq "left") {
-        $me->set_direction($me->get_direction->turn_left);
-    }
-    elsif ($turn eq "right") {
-        $me->set_direction($me->get_direction->turn_right);
-    }
-
-    look();
-}
-
-sub face {
-    my ($direction) = @_;
-
-    $me->set_direction($direction);
-
-    look();
+sub quit {
+    exit 0;
 }
 
 sub look {
@@ -145,8 +146,8 @@ sub look {
 #    }
 }
 
-sub describe_location {
-    my ($location) = @_;
+sub examine {
+    my $location = $me->get_location;
 
     my $guard = $location->get_guard;
     if($guard) {
@@ -181,3 +182,32 @@ sub describe_location {
     }
 }
 
+sub commands {
+    say "Available commands: " . join(" ", sort keys %command_defs);
+}
+
+sub forward {
+    if ($me->can_walk_forward) {
+        $me->walk_forward;
+    }
+    else {
+        say "He can't go that way!";
+    }
+}
+
+sub turn {
+    my ($turn) = @_;
+
+    if ($turn eq "left") {
+        $me->set_direction($me->get_direction->turn_left);
+    }
+    elsif ($turn eq "right") {
+        $me->set_direction($me->get_direction->turn_right);
+    }
+}
+
+sub face {
+    my ($direction) = @_;
+
+    $me->set_direction($direction);
+}
