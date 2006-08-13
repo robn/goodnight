@@ -24,7 +24,7 @@ my %command_defs = (
 
     look        => { look => [] },
 
-    forward     => { call => \&forward,
+    walk        => { call => \&walk,
                      look => [] },
 
     left        => { call => sub { turn("left") },
@@ -223,9 +223,9 @@ sub commands {
     say "Available commands: " . join(" ", sort keys %command_defs);
 }
 
-sub forward {
-    if ($me->can_walk_forward) {
-        $me->walk_forward;
+sub walk {
+    if ($me->can_walk_walk) {
+        $me->walk_walk;
         return;
     }
 
