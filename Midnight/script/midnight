@@ -18,6 +18,8 @@ sub say (@) {
 
 my %command_defs = (
     look        => { look => [] },
+    who         => { look => [qw(who)] },
+    stats       => { look => [qw(stats)] },
 
     left        => { call => sub { turn("left") },
                      look => [qw(where)] },
@@ -161,9 +163,9 @@ sub look {
     }
 
     if ($want{stats}) {
-        say "He is " . $me->get_condition . ".";
         say "The ice fear is " . $location->describe_ice_fear . ". " .
             $me->get_name . " is " . $me->get_courage . ".";
+        say "He is " . $me->get_condition . ".";
     }
 
     if ($want{who}) {
