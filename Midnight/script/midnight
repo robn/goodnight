@@ -17,15 +17,7 @@ sub say (@) {
 }
 
 my %command_defs = (
-    commands    => { call => \&commands },
-
-    quit        => { call => \&quit },
-    exit        => { call => \&quit },
-
     look        => { look => [] },
-
-    walk        => { call => \&walk,
-                     look => [] },
 
     left        => { call => sub { turn("left") },
                      look => [qw(where)] },
@@ -49,7 +41,15 @@ my %command_defs = (
     northwest   => { call => sub { face(Midnight::Map::Direction::NORTHWEST) },
                      look => [qw(where)] },
 
+    walk        => { call => \&walk,
+                     look => [] },
+
     seek        => { look => [qw(seek)] },
+
+    commands    => { call => \&commands },
+
+    quit        => { call => \&quit },
+    exit        => { call => \&quit },
 );
 
 my %command_shortcuts = (
@@ -124,10 +124,6 @@ while (! $game->is_game_over) {
             look();
         }
     }
-}
-
-sub quit {
-    exit 0;
 }
 
 sub look {
@@ -219,20 +215,6 @@ sub look {
     }
 }
 
-sub commands {
-    say "Available commands: " . join(" ", sort keys %command_defs);
-}
-
-sub walk {
-    if ($me->can_walk_walk) {
-        $me->walk_walk;
-        return;
-    }
-
-    say "He can't go that way!";
-    return 1;
-}
-
 sub turn {
     my ($turn) = @_;
 
@@ -253,3 +235,22 @@ sub face {
 
     return;
 }
+
+sub walk {
+    if ($me->can_walk_walk) {
+        $me->walk_walk;
+        return;
+    }
+
+    say "He can't go that way!";
+    return 1;
+}
+
+sub commands {
+    say "Available commands: " . join(" ", sort keys %command_defs);
+}
+
+sub quit {
+    exit 0;
+}
+
