@@ -155,7 +155,19 @@ sub look {
 
     if ($want{where}) {
         say $me;
-        say "He stands at $location looking $direction at $looking.";
+
+        my $msg = "He stands " . $location->get_feature->at . " $location " .
+                  "looking $direction";
+        
+        if ($location->get_domain != $looking->get_domain or
+            $location->get_feature != $looking->get_feature) {
+            $msg .= " to $looking.";
+        }
+        else {
+            $msg .= ".";
+        }
+
+        say $msg;
     }
 
     if ($want{stats}) {
