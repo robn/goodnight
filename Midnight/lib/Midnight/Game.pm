@@ -394,6 +394,7 @@ sub random {
     GLOOM => [ "Gloom", "the Lord of Gloom", Midnight::Race::FREE, 8, 0, 150, 64, 15, 56, 0x01, 0x01, 500, 1000, Midnight::Map::Direction::EAST ],
     SHIMERIL => [ "Shimeril", "the Lord of Shimeril", Midnight::Race::FREE, 28, 42, 150, 64, 15, 64, 0x01, 0x01, 800, 1000, Midnight::Map::Direction::NORTHWEST ],
     KUMAR => [ "Kumar", "the Lord of Kumar", Midnight::Race::FREE, 57, 29, 150, 64, 10, 64, 0x01, 0x01, 700, 1000, Midnight::Map::Direction::NORTH ],
+    ITHRORN => [ "Ithrorn", "the Lord of Ithrorn", Midnight::Race::FREE, 57, 15, 150, 64, 15, 64, 0x09, 0x01, 1000, 1200, Midnight::Map::Direction::NORTHWEST ],
     DAWN => [ "Dawn", "the Lord of Dawn", Midnight::Race::FREE, 44, 45, 150, 64, 8, 48, 0x01, 0x01, 500, 800, Midnight::Map::Direction::NORTH ],
     DREAMS => [ "Dreams", "the Lord Of Dreams", Midnight::Race::FEY, 42, 16, 180 , 64,  20,  90,  0x1f, 0x08, 800,  1200, Midnight::Map::Direction::NORTH ],
     DREGRIM => [ "Dregrim", "the Lord Of Dregrim", Midnight::Race::FEY, 59, 43, 150,  64,  15,  80,  0x1f, 0x08, 400,  1000, Midnight::Map::Direction::NORTH ],
