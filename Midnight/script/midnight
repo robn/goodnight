@@ -154,7 +154,7 @@ sub look {
     my $looking = $map->get_looking_towards($location, $direction);
 
     if ($want{where}) {
-        say $me;
+        say cap($me);
 
         my $msg = "He stands " . $location->get_feature->at . " $location " .
                   "looking $direction";
@@ -210,7 +210,7 @@ sub look {
         for my $c (@{$location->get_characters}) {
             next if $c == $me;
 
-            say "$c is here." . character_commands($c);
+            say cap($c) . " is here." . character_commands($c);
         }
     }
 
