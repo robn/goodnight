@@ -67,6 +67,8 @@ sub START {
     $self->init_characters;
     $self->init_armies;
     $self->init_doomguard;
+
+    $self->calc_doomdarks_citadels;
 }
 
 sub remove_doomguard {
