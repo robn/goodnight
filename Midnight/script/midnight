@@ -48,6 +48,9 @@ my %command_defs = (
 
     fight       => { call => \&fight },
 
+    hide        => { call => \&hide },
+    show        => { call => \&show },
+
     commands    => { call => \&commands },
 
     quit        => { call => \&quit },
@@ -258,6 +261,26 @@ sub forward {
     return 1;
 }
 
+sub hide {
+    if ($me->can_hide and !$me->is_hidden) {
+        $me->set_hidden(1);
+        say $me->get_name . " is hidden.";
+        return;
+    }
+
+    say "He can't hide!";
+}
+
+sub show {
+    if ($me->is_hidden) {
+        $me->set_hidden(0);
+        say $me->get_name . " is revealed.";
+        return;
+    }
+
+    say "He's not hidden!";
+}
+
 sub fight {
     if ($me->can_fight) {
         my $object = $me->get_location->get_object;
@@ -269,11 +292,11 @@ sub fight {
         else {
             say cap("$object slew him.");
         }
+
+        return;
     }
 
-    else {
-        say "He can't fight!";
-    }
+    say "He can't fight!";
 }
 
 sub commands {
