@@ -19,6 +19,10 @@ my %foul        : ATTR;
 sub START {
     my ($self, $ident, $args) = @_;
 
+    $characters{ident $self} = [];
+    $free{ident $self} = [];
+    $foul{ident $self} = [];
+
     my $location = $location{ident $self};
 
     $game{$ident} = $location->get_game;
