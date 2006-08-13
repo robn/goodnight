@@ -474,7 +474,7 @@ sub fight {
     my ($self) = @_;
 
     my $object = $self->get_location->get_object;
-    my $killed = $object;
+    my $killed{ident $self} = $object;
 
     for my $character (@{$self->get_location->get_characters}) {
         if ($character->get_warriors->get_how_many != 0 or
