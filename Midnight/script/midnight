@@ -91,12 +91,12 @@ sub look {
         " at $looking.";
     say $me->get_time;
 
-    my @characters = grep { $_ != $me } @{$me->get_location->get_characters};
-    my $count = @characters;
-    if ($count > 0) {
-        say "There ".PL_V("is", $count)." $count ".PL("person", $count)." here: ".
-            join(" ", sort map { $_->get_name } @characters);
-    }
+#    my @characters = grep { $_ != $me } @{$me->get_location->get_characters};
+#    my $count = @characters;
+#    if ($count > 0) {
+#        say "There ".PL_V("is", $count)." $count ".PL("person", $count)." here: ".
+#            join(" ", sort map { $_->get_name } @characters);
+#    }
 }
 
 sub describe_location {
