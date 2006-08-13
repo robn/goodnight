@@ -212,6 +212,8 @@ sub get_ice_fear {
 sub describe_ice_fear {
     my ($self) = @_;
 
+    $self->get_ice_fear;
+
     return Midnight::Location::Fear->by_ordinal((7 - $ice_fear{ident $self} / 0x40) % 8);
 }
 
