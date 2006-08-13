@@ -124,14 +124,14 @@ sub can_walk_forward {
 
     my $dest = $self->get_game->get_map->get_in_front($self->get_location, $direction{ident $self});
 
-    return
+    return (
         $self->can_leave and
         not $time{ident $self}->is_night and
         $self->get_condition != Midnight::Unit::Condition::UTTERLY_TIRED and
         $dest->get_feature != Midnight::Location::Feature::FROZEN_WASTE and
         @{$dest->get_characters} < 29 and
         @{$dest->get_armies} == 0 and
-        (not $dest->get_guard or $dest->get_guard->get_race != Midnight::Race::FOUL);
+        (not $dest->get_guard or $dest->get_guard->get_race != Midnight::Race::FOUL));
 }
 
 sub can_leave {

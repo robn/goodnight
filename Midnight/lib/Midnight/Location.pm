@@ -22,6 +22,13 @@ my %armies      : ATTR( :get<armies> );
 my %characters  : ATTR( :get<characters> );
 my %ice_fear    : ATTR;
 
+sub START {
+    my ($self, $ident, $args) = @_;
+
+    $armies{ident $self} = [];
+    $characters{ident $self} = [];
+}
+
 sub get_coordinates {
     my ($self) = @_;
 
