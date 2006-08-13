@@ -41,10 +41,12 @@ my %command_defs = (
     northwest   => { call => sub { face(Midnight::Map::Direction::NORTHWEST) },
                      look => [qw(where)] },
 
-    walk        => { call => \&walk,
+    forward     => { call => \&forward,
                      look => [] },
 
     seek        => { look => [qw(seek)] },
+
+    fight       => { call => \&fight },
 
     commands    => { call => \&commands },
 
@@ -53,9 +55,6 @@ my %command_defs = (
 );
 
 my %command_shortcuts = (
-    q   => "quit",
-    l   => "look",
-    x   => "examine",
     n   => "north",
     ne  => "northeast",
     e   => "east",
@@ -64,6 +63,9 @@ my %command_shortcuts = (
     sw  => "southwest",
     w   => "west",
     nw  => "northwest",
+    l   => "look",
+    f   => "forward",
+    q   => "quit",
 );
 
 my (%commands, %conflicts);
@@ -236,7 +238,7 @@ sub face {
     return;
 }
 
-sub walk {
+sub forward {
     if ($me->can_walk_forward) {
         $me->walk_forward;
         return;
@@ -244,6 +246,24 @@ sub walk {
 
     say "He can't go that way!";
     return 1;
+}
+
+sub fight {
+    if ($me->can_fight) {
+        my $object = $me->get_location->get_object;
+
+        $me->fight;
+        if ($me->is_alive) {
+            say "He slew the $object.";
+        }
+        else {
+            say "$object slew him.";
+        }
+    }
+
+    else {
+        say "He can't fight!";
+    }
 }
 
 sub commands {
