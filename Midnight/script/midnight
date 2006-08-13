@@ -17,14 +17,31 @@ sub say (@) {
 }
 
 my %commands_base = (
-    look     => \&cmd_look,
-    describe => \&cmd_describe,
-    forward  => \&cmd_forward,
+    commands    => \&cmd_commands,
+
+    look        => \&cmd_look,
+    describe    => \&cmd_describe,
+
+    forward     => \&cmd_forward,
+
+    left        => sub { turn("left") },
+    right       => sub { turn("right") },
+
+    north       => sub { face(Midnight::Map::Direction::NORTH) },
+    northeast   => sub { face(Midnight::Map::Direction::NORTHEAST) },
+    east        => sub { face(Midnight::Map::Direction::EAST) },
+    southeast   => sub { face(Midnight::Map::Direction::SOUTHEAST) },
+    south       => sub { face(Midnight::Map::Direction::SOUTH) },
+    southwest   => sub { face(Midnight::Map::Direction::SOUTHWEST) },
+    west        => sub { face(Midnight::Map::Direction::WEST) },
+    northwest   => sub { face(Midnight::Map::Direction::NORTHWEST) },
 );
 
 my (%commands, %conflicts);
 for my $key (keys %commands_base) {
     my @bits = split '', $key;
+    pop @bits;
+
     my $cmd = "";
     while (my $bit = shift @bits) {
         $cmd .= $bit;
@@ -38,30 +55,34 @@ for my $key (keys %commands_base) {
     }
 }
 delete $commands{$_} for keys %conflicts;
+map { $commands{$_} = $_; delete $conflicts{$_} } keys %commands_base;
 
 my $cmd_regex_str = "(?:" . join("|", sort keys %commands) . ")";
-my $cmd_regex = qr/$cmd_regex_str/i;
+my $cmd_regex = qr/^$cmd_regex_str$/i;
 
 my $game = Midnight::Game->new;
 my $map = $game->get_map;
 
 my $me = $game->LUXOR;
 
-cmd_look();
+look();
 
 while (! $game->is_game_over) {
     my $cmd;
     while ($cmd = prompt "What now? ", -until => $cmd_regex) {
-        my $msg = "Sorry, I don't understand '$cmd'.";
-
         if (exists $conflicts{$cmd}) {
-            $msg .= " Did you mean: " . join(" ", sort keys %{$conflicts{$cmd}});
+            say "'$cmd' is ambiguous. Did you mean: " . join(" ", sort keys %{$conflicts{$cmd}});
         }
-
-        say $msg;
+        else {
+            say "Sorry, I don't understand '$cmd'.";
+        }
     }
 
     $commands_base{$commands{$cmd}}->();
+}
+
+sub cmd_commands {
+    say "Available commands: " . join(" ", sort keys %commands_base);
 }
 
 sub cmd_look {
@@ -80,6 +101,27 @@ sub cmd_forward {
     else {
         say "He can't go that way!";
     }
+}
+
+sub turn {
+    my ($turn) = @_;
+
+    if ($turn eq "left") {
+        $me->set_direction($me->get_direction->turn_left);
+    }
+    elsif ($turn eq "right") {
+        $me->set_direction($me->get_direction->turn_right);
+    }
+
+    look();
+}
+
+sub face {
+    my ($direction) = @_;
+
+    $me->set_direction($direction);
+
+    look();
 }
 
 sub look {
