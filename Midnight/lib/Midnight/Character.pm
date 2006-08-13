@@ -74,7 +74,7 @@ sub get_courage {
     $self->calculate_courage;
     return $courage{ident $self};
 }
-
+    
 sub calculate_courage {
     my ($self) = @_;
 
@@ -114,9 +114,10 @@ sub is_hidden {
 sub can_hide {
     my ($self) = @_;
 
-    return $self != $self->get_game->MORKIN and
-           $self->get_warriors->get_how_many == 0 and
-           $self->get_riders->get_how_many == 0;
+    return (
+        $self != $self->get_game->MORKIN and
+        $self->get_warriors->get_how_many == 0 and
+        $self->get_riders->get_how_many == 0);
 }
 
 sub can_walk_forward {
@@ -140,7 +141,7 @@ sub can_leave {
     my $object = $self->get_location->get_object;
     my $guard = $self->get_location->get_guard;
 
-    return
+    return (
         $self->is_alive and not $self->is_hidden and
         ($time{ident $self}->is_dawn or (
             @{$self->get_location->get_armies} == 0 and
@@ -148,7 +149,7 @@ sub can_leave {
         $object != Midnight::Location::Object::DRAGONS and
         $object != Midnight::Location::Object::ICE_TROLLS and
         $object != Midnight::Location::Object::SKULKRIN and
-        $object != Midnight::Location::Object::WOLVES;
+        $object != Midnight::Location::Object::WOLVES);
 }
 
 sub walk_forward {
@@ -195,10 +196,11 @@ sub walk_forward {
 sub can_recruit {
     my ($self, $them) = @_;
 
-    return not $them->is_recruited and 
-           $them->get_location == $self->get_location and
-           ($recruiting_key{ident $self} & $them->get_recruiting_key) and
-           (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN);
+    return (
+        not $them->is_recruited and 
+        $them->get_location == $self->get_location and
+        ($recruiting_key{ident $self} & $them->get_recruiting_key) and
+        (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN));
 }
 
 sub recruit {
@@ -222,13 +224,14 @@ sub can_recruit_men {
     my ($self) = @_;
 
     my $guards = $self->get_location->get_guard;
-    return $guards and $guards->get_race == $self->get_race and
-           $guards->get_how_many > 125 and
-               (($guards->get_type == Midnight::Army::Type::RIDERS and
-                 $self->get_riders->get_how_many < 1175) or
-                ($guards->get_type == Midnight::Army::Type::WARRIORS and
-                 $self->get_warriors->get_how_many < 1175)) and
-           (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN);
+    return (
+        $guards and $guards->get_race == $self->get_race and
+        $guards->get_how_many > 125 and
+            (($guards->get_type == Midnight::Army::Type::RIDERS and
+              $self->get_riders->get_how_many < 1175) or
+             ($guards->get_type == Midnight::Army::Type::WARRIORS and
+              $self->get_warriors->get_how_many < 1175)) and
+        (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN));
 }
 
 sub recruit_men {
@@ -255,14 +258,14 @@ sub can_stand_on_guard {
 
     my $guards = $self->get_location->get_guard;
 
-    return $guards and $guards->get_race = $self->get_race and
-           $guards->get_how_many < 1175 and
-               (($guards->get_type == Midnight::Army::Type::RIDERS and
-                 $self->get_riders->get_how_many >= 100) or
-                ($guards->get_type == Midnight::Army::Type::WARRIORS and
-                 $self->get_warriors->get_how_many >= 100)) and
-           (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN);
-
+    return (
+        $guards and $guards->get_race = $self->get_race and
+        $guards->get_how_many < 1175 and
+            (($guards->get_type == Midnight::Army::Type::RIDERS and
+              $self->get_riders->get_how_many >= 100) or
+             ($guards->get_type == Midnight::Army::Type::WARRIORS and
+              $self->get_warriors->get_how_many >= 100)) and
+        (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN));
 }
 
 sub stand_on_guard {
@@ -295,11 +298,11 @@ sub can_attack {
 
     my $dest = $self->get_game->get_map->get_in_front($self->get_location, $direction{ident $self});
 
-    return $self->can_leave and
-               (@{$dest->get_armies} != 0 or
-                ($dest->get_guard and $dest->get_guard->get_race == Midnight::Race::FOUL)) and
-           $self->get_courage != Midnight::Character::Courage::UTTERLY_AFRAID;
-               
+    return (
+        $self->can_leave and
+            (@{$dest->get_armies} != 0 or
+             ($dest->get_guard and $dest->get_guard->get_race == Midnight::Race::FOUL)) and
+        $self->get_courage != Midnight::Character::Courage::UTTERLY_AFRAID)
 }
 
 sub describe_battle {
@@ -458,13 +461,13 @@ sub can_fight {
     my ($self) = @_;
 
     my $object = $self->get_location->get_object;
-    return
-        ! $self->is_hidden and (
+    return (
+        not $self->is_hidden and (
             $object == Midnight::Location::Object::DRAGONS or
             $object == Midnight::Location::Object::ICE_TROLLS or
             $object == Midnight::Location::Object::SKULKRIN or
             $object == Midnight::Location::Object::WOLVES) and
-        (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN);
+        (@{$self->get_location->get_armies} == 0 or $self == $self->get_game->MORKIN));
 }
 
 sub fight {

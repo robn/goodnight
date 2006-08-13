@@ -88,7 +88,7 @@ sub is_controllable {
     my ($self, $character) = @_;
 
     if ($character != $self->LUXOR and $character != $self->MORKIN) {
-        return $character->is_recruited and $self->is_moon_ring_controlled;
+        return ($character->is_recruited and $self->is_moon_ring_controlled);
     }
 
     return 1;
