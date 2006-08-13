@@ -22,33 +22,32 @@ my %command_defs = (
     quit        => { call => \&quit },
     exit        => { call => \&quit },
 
-    look        => { look => 1 },
-    examine     => { examine => 1 },
+    look        => { look => [] },
 
     forward     => { call => \&forward,
-                     look => 1 },
+                     look => [] },
 
     left        => { call => sub { turn("left") },
-                     look => 1 },
+                     look => [qw(where)] },
     right       => { call => sub { turn("right") },
-                     look => 1 },
+                     look => [qw(where)] },
 
     north       => { call => sub { face(Midnight::Map::Direction::NORTH) },
-                     look => 1 },
+                     look => [qw(where)] },
     northeast   => { call => sub { face(Midnight::Map::Direction::NORTHEAST) },
-                     look => 1 },
+                     look => [qw(where)] },
     east        => { call => sub { face(Midnight::Map::Direction::EAST) },
-                     look => 1 },
+                     look => [qw(where)] },
     southeast   => { call => sub { face(Midnight::Map::Direction::SOUTHEAST) },
-                     look => 1 },
+                     look => [qw(where)] },
     south       => { call => sub { face(Midnight::Map::Direction::SOUTH) },
-                     look => 1 },
+                     look => [qw(where)] },
     southwest   => { call => sub { face(Midnight::Map::Direction::SOUTHWEST) },
-                     look => 1 },
+                     look => [qw(where)] },
     west        => { call => sub { face(Midnight::Map::Direction::WEST) },
-                     look => 1 },
+                     look => [qw(where)] },
     northwest   => { call => sub { face(Midnight::Map::Direction::NORTHWEST) },
-                     look => 1 },
+                     look => [qw(where)] },
 );
 
 my %command_shortcuts = (
@@ -109,16 +108,20 @@ while (! $game->is_game_over) {
 
     my $defs = $command_defs{$commands{$cmd}};
 
+    my $error;
     if (exists $defs->{call}) {
-        $defs->{call}->();
+        $error = $defs->{call}->();
     }
 
-    if (exists $defs->{examine}) {
-        examine();
+    if (not $error and exists $defs->{look}) {
+        my $want = $defs->{look};
+        if (ref $want eq "ARRAY") {
+            look(@{$defs->{look}});
+        }
+        else {
+            look();
+        }
     }
-    elsif (exists $defs->{look}) {
-        look();
-    }   
 }
 
 sub quit {
@@ -126,59 +129,62 @@ sub quit {
 }
 
 sub look {
-    my $location = $me->get_location;
-    my $direction = $me->get_direction;
+    my @want = @_;
+    @want = qw(where time) if @want == 0;
+    my %want = map { $_ => 1 } @want;
 
+    my $location = $me->get_location;
+
+    my $direction = $me->get_direction;
     my $looking = $map->get_looking_towards($location, $direction);
 
-    say $me;
-    say "He stands at $location looking $direction at $looking.";
-    say "He is " . $me->get_condition . ".";
-    say "The ice fear is " . $location->describe_ice_fear . ". " .
-        $me->get_name . " is " . $me->get_courage . ".";
-    say $me->get_time;
-
-#    my @characters = grep { $_ != $me } @{$me->get_location->get_characters};
-#    my $count = @characters;
-#    if ($count > 0) {
-#        say "There ".PL_V("is", $count)." $count ".PL("person", $count)." here: ".
-#            join(" ", sort map { $_->get_name } @characters);
-#    }
-}
-
-sub examine {
-    my $location = $me->get_location;
-
-    my $guard = $location->get_guard;
-    if($guard) {
-        say "$guard of the " . $guard->get_race . " guard the " . $location->get_feature . ".";
+    if ($want{where}) {
+        say $me;
+        say "He stands at $location looking $direction at $looking.";
     }
 
-    for my $c (@{$location->get_characters}) {
-        next if $c == $me;
+    if ($want{time}) {
+        say $me->get_time;
+    }
 
-        my $line = "$c is here.";
+    if ($want{stats}) {
+        say "He is " . $me->get_condition . ".";
+        say "The ice fear is " . $location->describe_ice_fear . ". " .
+            $me->get_name . " is " . $me->get_courage . ".";
+    }
 
-        my $warriors = $c->get_warriors;
-        my $riders = $c->get_riders;
-
-        if ($warriors->get_how_many > 0 or $riders->get_how_many > 0) {
-            $line .= " He commands ";
-
-            if ($warriors->get_how_many > 0 and $riders->get_how_many > 0) {
-                $line .= "$warriors and $riders";
-            }
-            elsif ($warriors->get_how_many > 0) {
-                $line .= $warriors;
-            }
-            elsif ($riders->get_how_many > 0) {
-                $line .= $riders;
-            }
-            
-            $line .= " of the " . $c->get_race . ".";
+    if ($want{who}) {
+        my $guard = $location->get_guard;
+        if($guard) {
+            say "$guard of the " . $guard->get_race . " guard the " . $location->get_feature . ".";
         }
 
-        say $line;
+        for my $c (@{$location->get_characters}) {
+            next if $c == $me;
+
+            my $line = "$c is here.";
+
+            my $warriors = $c->get_warriors;
+            my $riders = $c->get_riders;
+
+            if ($warriors->get_how_many > 0 or $riders->get_how_many > 0) {
+                $line .= " He commands ";
+
+                if ($warriors->get_how_many > 0 and $riders->get_how_many > 0) {
+                    $line .= "$warriors and $riders";
+                }
+                elsif ($warriors->get_how_many > 0) {
+                    $line .= $warriors;
+                }
+                elsif ($riders->get_how_many > 0) {
+                    $line .= $riders;
+                }
+            
+                $line .= " of the " . $c->get_race . ".";
+            }
+
+            say $line;
+        }
     }
 }
 
@@ -189,10 +195,11 @@ sub commands {
 sub forward {
     if ($me->can_walk_forward) {
         $me->walk_forward;
+        return;
     }
-    else {
-        say "He can't go that way!";
-    }
+
+    say "He can't go that way!";
+    return 1;
 }
 
 sub turn {
@@ -204,10 +211,14 @@ sub turn {
     elsif ($turn eq "right") {
         $me->set_direction($me->get_direction->turn_right);
     }
+
+    return;
 }
 
 sub face {
     my ($direction) = @_;
 
     $me->set_direction($direction);
+
+    return;
 }
