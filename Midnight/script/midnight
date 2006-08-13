@@ -48,6 +48,8 @@ my %command_defs = (
                      look => [qw(where)] },
     northwest   => { call => sub { face(Midnight::Map::Direction::NORTHWEST) },
                      look => [qw(where)] },
+
+    seek        => { look => [qw(seek)] },
 );
 
 my %command_shortcuts = (
@@ -184,6 +186,35 @@ sub look {
             }
 
             say $line;
+        }
+    }
+
+    if ($want{seek}) {
+        my $object = $location->get_object;
+
+        if ($object->is_beast) {
+            my $msg = "He has found $object";
+            if ($me->is_hidden) {
+                $msg .= ". " . $me->name . " is hidden.";
+            }
+            else {
+                $msg .= " and must ";
+                if ($me->can_fight and $me->can_hide) {
+                    $msg .= "fight or hide.";
+                }
+                elsif ($me->can_fight) {
+                    $msg .= "fight.";
+                }
+                elsif ($me->can_hide) {
+                    $msg .= "hide.";
+                }
+            }
+
+            say $msg;
+        }
+
+        else {
+            say "He has found " . $object->as_string($location) . ".";
         }
     }
 }
