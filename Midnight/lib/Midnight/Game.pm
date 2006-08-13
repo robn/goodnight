@@ -41,7 +41,7 @@ sub AUTOMETHOD {
 
 
 # assigned at end of file
-my (%character_defs, @army_defs, @doomguard_defs);
+my (@character_defs, @army_defs, @doomguard_defs);
 
 my %map                     :ATTR( :get<map> :set<map> );
 my %characters              :ATTR( :get<characters> );
@@ -303,9 +303,11 @@ sub save_doomguard {
 sub init_characters {
     my ($self) = @_;
 
+    my @defs = @character_defs;
+
     my $id = 0;
-    for my $key (keys %character_defs) {
-        my @def = @{$character_defs{$key}};
+    while (my $key = shift @defs) {
+        my @def = @{shift @defs};
 
         my $facing = pop @def;
 
@@ -383,7 +385,7 @@ sub random {
     return int(rand($max));
 }
 
-%character_defs = (
+@character_defs = (
     LUXOR => [ "Luxor", "Luxor the Moonprince", Midnight::Race::FREE, 12, 40, 180, 127, 25, 80, 0x17, 0x00, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
     MORKIN => [ "Morkin", "Morkin", Midnight::Race::MORKIN, 12, 40, 200, 127, 5, 127, 0x7e, 0x00, 0, 0, Midnight::Map::Direction::SOUTHEAST ],
     CORLETH => [ "Corleth", "Corleth the Fey", Midnight::Race::FEY, 12, 40, 180, 127, 20, 96, 0x6b, 0x00, 0, 0, Midnight::Map::Direction::EAST ],
