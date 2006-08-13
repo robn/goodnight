@@ -145,7 +145,7 @@ sub look {
     }
 
     my @want = @_;
-    @want = qw(where time) if @want == 0;
+    @want = qw(where ahead time) if @want == 0;
     my %want = map { $_ => 1 } @want;
 
     my $location = $me->get_location;
@@ -158,14 +158,35 @@ sub look {
         say "He stands at $location looking $direction at $looking.";
     }
 
-    if ($want{time}) {
-        say $me->get_time;
-    }
-
     if ($want{stats}) {
         say "The ice fear is " . $location->describe_ice_fear . ". " .
             $me->get_name . " is " . $me->get_courage . ".";
         say "He is " . $me->get_condition . ".";
+    }
+
+    sub character_commands {
+        my ($c) = @_;
+
+        my $line = "";
+
+        my $warriors = $c->get_warriors;
+        my $riders = $c->get_riders;
+
+        if ($warriors->get_how_many > 0 or $riders->get_how_many > 0) {
+            $line .= " He commands ";
+
+            if ($warriors->get_how_many > 0 and $riders->get_how_many > 0) {
+                $line .= "$warriors and $riders";
+            }
+            elsif ($warriors->get_how_many > 0) {
+                $line .= $warriors;
+            }
+            elsif ($riders->get_how_many > 0) {
+                $line .= $riders;
+            }
+            
+            $line .= " of the " . $c->get_race . ".";
+        }
     }
 
     if ($want{who}) {
@@ -177,28 +198,15 @@ sub look {
         for my $c (@{$location->get_characters}) {
             next if $c == $me;
 
-            my $line = "$c is here.";
+            say "$c is here." . character_commands($c);
+        }
+    }
 
-            my $warriors = $c->get_warriors;
-            my $riders = $c->get_riders;
+    if ($want{ahead}) {
+        my $ahead = $game->get_map->get_in_front($location, $direction);
 
-            if ($warriors->get_how_many > 0 or $riders->get_how_many > 0) {
-                $line .= " He commands ";
-
-                if ($warriors->get_how_many > 0 and $riders->get_how_many > 0) {
-                    $line .= "$warriors and $riders";
-                }
-                elsif ($warriors->get_how_many > 0) {
-                    $line .= $warriors;
-                }
-                elsif ($riders->get_how_many > 0) {
-                    $line .= $riders;
-                }
-            
-                $line .= " of the " . $c->get_race . ".";
-            }
-
-            say $line;
+        for my $c (@{$ahead->get_characters}) {
+            say "Ahead stands $c." . character_commands($c);
         }
     }
 
@@ -230,6 +238,11 @@ sub look {
             say "He has found " . $object->as_string($location) . ".";
         }
     }
+
+    if ($want{time}) {
+        say $me->get_time;
+    }
+
 }
 
 sub turn {
