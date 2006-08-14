@@ -20,6 +20,7 @@ my %command_defs = (
     look        => { look => [qw(where ahead time)] },
     who         => { look => [qw(who)] },
     stats       => { look => [qw(stats)] },
+    time        => { look => [qw(time)] },
 
     left        => { call => sub { turn("left") },
                      look => [] },
@@ -97,8 +98,6 @@ map { $commands{$_} = $command_shortcuts{$_}; delete $conflicts{$_} } keys %comm
 
 my $cmd_regex_str = "(?:" . join("|", map { s/([?])/\\$1/g; $_ } sort keys %commands) . ")";
 my $cmd_regex = qr/^$cmd_regex_str$/i;
-
-say $cmd_regex_str;
 
 my $game = Midnight::Game->new;
 my $map = $game->get_map;
