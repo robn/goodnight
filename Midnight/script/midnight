@@ -53,7 +53,7 @@ my %command_defs = (
     hide        => { call => \&hide },
     show        => { call => \&show },
 
-    commands    => { call => \&commands },
+    help        => { call => \&help },
 
     quit        => { call => \&quit },
     exit        => { call => \&quit },
@@ -70,6 +70,7 @@ my %command_shortcuts = (
     nw  => "northwest",
     l   => "look",
     f   => "forward",
+    '?' => "help",
     q   => "quit",
 );
 
@@ -94,8 +95,10 @@ delete $commands{$_} for keys %conflicts;
 map { $commands{$_} = $_; delete $conflicts{$_} } keys %command_defs;
 map { $commands{$_} = $command_shortcuts{$_}; delete $conflicts{$_} } keys %command_shortcuts;
 
-my $cmd_regex_str = "(?:" . join("|", sort keys %commands) . ")";
+my $cmd_regex_str = "(?:" . join("|", map { s/([?])/\\$1/g; $_ } sort keys %commands) . ")";
 my $cmd_regex = qr/^$cmd_regex_str$/i;
+
+say $cmd_regex_str;
 
 my $game = Midnight::Game->new;
 my $map = $game->get_map;
@@ -326,7 +329,7 @@ sub fight {
     say "He can't fight!";
 }
 
-sub commands {
+sub help {
     my %sc;
     push @{$sc{$command_shortcuts{$_}}}, $_ for keys %command_shortcuts;
 
