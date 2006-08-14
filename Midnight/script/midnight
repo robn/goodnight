@@ -109,6 +109,8 @@ look(qw(where ahead time));
 while (! $game->is_game_over) {
     my $cmd;
     while ($cmd = prompt "What now? ", -until => $cmd_regex) {
+        next if $cmd eq "";
+
         if (exists $conflicts{$cmd}) {
             say "'$cmd' is ambiguous. Did you mean: " . join(" ", sort keys %{$conflicts{$cmd}});
         }
