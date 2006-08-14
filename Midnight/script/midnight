@@ -54,6 +54,8 @@ my %command_defs = (
     hide        => { call => \&hide },
     show        => { call => \&show },
 
+    switch      => { call => \&switch },
+
     help        => { call => \&help },
 
     quit        => { call => \&quit },
@@ -97,7 +99,7 @@ map { $commands{$_} = $_; delete $conflicts{$_} } keys %command_defs;
 map { $commands{$_} = $command_shortcuts{$_}; delete $conflicts{$_} } keys %command_shortcuts;
 
 my $cmd_regex_str = "(?:" . join("|", map { s/([?])/\\$1/g; $_ } sort keys %commands) . ")";
-my $cmd_regex = qr/^$cmd_regex_str$/i;
+my $cmd_regex = qr/^$cmd_regex_str(?: |$)/i;
 
 my $game = Midnight::Game->new;
 my $map = $game->get_map;
@@ -119,11 +121,13 @@ while (! $game->is_game_over) {
         }
     }
 
+    ($cmd, my @args) = split /\s+/, $cmd;
+
     my $defs = $command_defs{$commands{$cmd}};
 
     my $error;
     if (exists $defs->{call}) {
-        $error = $defs->{call}->();
+        $error = $defs->{call}->(@args);
     }
 
     if (not $error and exists $defs->{look}) {
@@ -328,6 +332,27 @@ sub fight {
     }
 
     say "He can't fight!";
+}
+
+sub switch {
+    my ($who) = @_;
+    
+    my %controlled = map { lc($_->get_name) => $_ }
+                     grep { $game->is_controllable($_) }
+                     @{$game->get_characters};
+
+    if (not $who) {
+        say "Characters you control: " . join(" ", map { cap($_) } keys %controlled);
+        return;
+    }
+
+    if (exists $controlled{lc $who}) {
+        $me = $controlled{lc $who};
+        look(qw(where ahead time));
+        return;
+    }
+
+    say "You can't control him!";
 }
 
 sub help {
