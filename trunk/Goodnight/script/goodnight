@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 
-use Midnight::Game;
+use Goodnight::Game;
 
 use IO::Prompt;
 use Lingua::EN::Inflect qw(PL PL_V);
@@ -27,21 +27,21 @@ my %command_defs = (
     right       => { call => sub { turn("right") },
                      look => [] },
 
-    north       => { call => sub { face(Midnight::Map::Direction::NORTH) },
+    north       => { call => sub { face(Goodnight::Map::Direction::NORTH) },
                      look => [] },
-    northeast   => { call => sub { face(Midnight::Map::Direction::NORTHEAST) },
+    northeast   => { call => sub { face(Goodnight::Map::Direction::NORTHEAST) },
                      look => [] },
-    east        => { call => sub { face(Midnight::Map::Direction::EAST) },
+    east        => { call => sub { face(Goodnight::Map::Direction::EAST) },
                      look => [] },
-    southeast   => { call => sub { face(Midnight::Map::Direction::SOUTHEAST) },
+    southeast   => { call => sub { face(Goodnight::Map::Direction::SOUTHEAST) },
                      look => [] },
-    south       => { call => sub { face(Midnight::Map::Direction::SOUTH) },
+    south       => { call => sub { face(Goodnight::Map::Direction::SOUTH) },
                      look => [] },
-    southwest   => { call => sub { face(Midnight::Map::Direction::SOUTHWEST) },
+    southwest   => { call => sub { face(Goodnight::Map::Direction::SOUTHWEST) },
                      look => [] },
-    west        => { call => sub { face(Midnight::Map::Direction::WEST) },
+    west        => { call => sub { face(Goodnight::Map::Direction::WEST) },
                      look => [] },
-    northwest   => { call => sub { face(Midnight::Map::Direction::NORTHWEST) },
+    northwest   => { call => sub { face(Goodnight::Map::Direction::NORTHWEST) },
                      look => [] },
 
     forward     => { call => \&forward,
@@ -101,7 +101,7 @@ map { $commands{$_} = $command_shortcuts{$_}; delete $conflicts{$_} } keys %comm
 my $cmd_regex_str = "(?:" . join("|", map { s/([?])/\\$1/g; $_ } sort keys %commands) . ")";
 my $cmd_regex = qr/^$cmd_regex_str(?: |$)/i;
 
-my $game = Midnight::Game->new;
+my $game = Goodnight::Game->new;
 my $map = $game->get_map;
 
 my $me = $game->LUXOR;
