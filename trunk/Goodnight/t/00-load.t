@@ -3,7 +3,7 @@
 use Test::More tests => 1;
 
 BEGIN {
-	use_ok( 'Midnight' );
+	use_ok( 'Goodnight' );
 }
 
-diag( "Testing Midnight $Midnight::VERSION, Perl $], $^X" );
+diag( "Testing Goodnight $Goodnight::VERSION, Perl $], $^X" );
