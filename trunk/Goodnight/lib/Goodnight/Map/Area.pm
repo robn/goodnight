@@ -1,4 +1,4 @@
-package Midnight::Map::Area;
+package Goodnight::Map::Area;
 
 use warnings;
 use strict;

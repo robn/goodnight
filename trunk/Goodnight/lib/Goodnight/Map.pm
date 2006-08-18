@@ -1,14 +1,14 @@
-package Midnight::Map;
+package Goodnight::Map;
 
 use warnings;
 use strict;
 
-use Midnight::Location;
-use Midnight::Location::Feature;
-use Midnight::Location::FrozenWaste;
-use Midnight::Location::Object;
-use Midnight::Map::Area;
-use Midnight::Map::Direction;
+use Goodnight::Location;
+use Goodnight::Location::Feature;
+use Goodnight::Location::FrozenWaste;
+use Goodnight::Location::Object;
+use Goodnight::Map::Area;
+use Goodnight::Map::Direction;
 
 use Class::Std;
 
@@ -52,7 +52,7 @@ sub get_location {
 
     if ($x < 0 or $y < 0 or
         $x >= @{$locations{ident $self}} or $y >= @{$locations{ident $self}->[0]}) {
-        return Midnight::Location::FrozenWaste->get_instance;
+        return Goodnight::Location::FrozenWaste->get_instance;
     }
 
     return $locations{ident $self}->[$x]->[$y];
@@ -78,7 +78,7 @@ sub get_looking_towards {
 
     for (0..2) {
         $location = $self->get_in_front($location, $direction);
-        if ($location->get_feature != Midnight::Location::Feature::PLAINS or $location->is_special) {
+        if ($location->get_feature != Goodnight::Location::Feature::PLAINS or $location->is_special) {
             last;
         }
     }
@@ -99,34 +99,34 @@ sub calc_direction {
 
     if ($origin->get_x > $target->get_x) {
         if ($origin->get_y > $target->get_y) {
-            return Midnight::Map::Direction::NORTHWEST;
+            return Goodnight::Map::Direction::NORTHWEST;
         }
         elsif ($origin->get_y < $target->get_y) {
-            return Midnight::Map::Direction::SOUTHWEST;
+            return Goodnight::Map::Direction::SOUTHWEST;
         }
         else {
-            return Midnight::Map::Direction::WEST;
+            return Goodnight::Map::Direction::WEST;
         }
     }
 
     elsif ($origin->get_x < $target->get_x) {
         if ($origin->get_y > $target->get_y) {
-            return Midnight::Map::Direction::NORTHEAST;
+            return Goodnight::Map::Direction::NORTHEAST;
         }
         elsif ($origin->get_y < $target->get_y) {
-            return Midnight::Map::Direction::SOUTHEAST;
+            return Goodnight::Map::Direction::SOUTHEAST;
         }
         else {
-            return Midnight::Map::Direction::EAST;
+            return Goodnight::Map::Direction::EAST;
         }
     }
 
     else {
         if ($origin->get_y > $target->get_y) {
-            return Midnight::Map::Direction::NORTH;
+            return Goodnight::Map::Direction::NORTH;
         }
         elsif ($origin->get_y < $target->get_y) {
-            return Midnight::Map::Direction::SOUTH
+            return Goodnight::Map::Direction::SOUTH
         }
         else {
             return undef;
@@ -143,13 +143,13 @@ sub START {
     my $i = 0;
     for my $y (0..60) {
         for my $x (0..63) {
-            $locations->[$x]->[$y] = Midnight::Location->new({
+            $locations->[$x]->[$y] = Goodnight::Location->new({
                 game    => $game{ident $self},
                 x       => $x,
                 y       => $y,
-                feature => Midnight::Location::Feature->by_ordinal($main_map[$i] & 0x0f),
-                object  => Midnight::Location::Object->by_ordinal($main_map[$i] >> 4),
-                area    => Midnight::Map::Area->by_ordinal($ref_desc_map[$i] & 0x3f),
+                feature => Goodnight::Location::Feature->by_ordinal($main_map[$i] & 0x0f),
+                object  => Goodnight::Location::Object->by_ordinal($main_map[$i] >> 4),
+                area    => Goodnight::Map::Area->by_ordinal($ref_desc_map[$i] & 0x3f),
                 domain  => ($ref_desc_map[$i] & 0x40) != 0,
                 special => ($ref_desc_map[$i] & 0x80) != 0,
             });

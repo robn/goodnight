@@ -1,4 +1,4 @@
-package Midnight::Location::Object;
+package Goodnight::Location::Object;
 
 use warnings;
 use strict;

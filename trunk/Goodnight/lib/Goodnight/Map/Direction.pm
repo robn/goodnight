@@ -1,4 +1,4 @@
-package Midnight::Map::Direction;
+package Goodnight::Map::Direction;
 
 use warnings;
 use strict;

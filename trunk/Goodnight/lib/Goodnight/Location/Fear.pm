@@ -1,4 +1,4 @@
-package Midnight::Location::Fear;
+package Goodnight::Location::Fear;
 
 use warnings;
 use strict;

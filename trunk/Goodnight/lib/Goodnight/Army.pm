@@ -1,12 +1,12 @@
-package Midnight::Army;
+package Goodnight::Army;
 
 use warnings;
 use strict;
 
-use base qw(Midnight::Unit);
+use base qw(Goodnight::Unit);
 
-use Midnight::Army::Type;
-use Midnight::Race;
+use Goodnight::Army::Type;
+use Goodnight::Race;
 
 use Class::Std;
 
@@ -54,7 +54,7 @@ sub dawn {
 sub increment_energy {
     my ($self, $increment) = @_;
 
-    if ($type{ident $self} == Midnight::Army::Type::RIDERS) {
+    if ($type{ident $self} == Goodnight::Army::Type::RIDERS) {
         $self->SUPER::increment_energy($increment + 6);
     }
     else {
@@ -81,12 +81,12 @@ sub guard {
 sub switch_sides {
     my ($self) = @_;
 
-    if ($self->get_race == Midnight::Race::FOUL) {
-        $self->set_race(Midnight::Race::FREE);
+    if ($self->get_race == Goodnight::Race::FOUL) {
+        $self->set_race(Goodnight::Race::FREE);
         $how_many{ident $self} = 200;
     }
     else {
-        $self->set_race(Midnight::Race::FOUL);
+        $self->set_race(Goodnight::Race::FOUL);
         $how_many{ident $self} = 250;
     }
 }

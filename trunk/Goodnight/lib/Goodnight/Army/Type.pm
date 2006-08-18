@@ -1,4 +1,4 @@
-package Midnight::Army::Type;
+package Goodnight::Army::Type;
 
 use warnings;
 use strict;

@@ -1,9 +1,9 @@
-package Midnight::Unit;
+package Goodnight::Unit;
 
 use warnings;
 use strict;
 
-use Midnight::Unit::Condition;
+use Goodnight::Unit::Condition;
 
 use Class::Std;
 
@@ -32,7 +32,7 @@ sub set_energy {
     $energy = MAX_ENERGY if $energy > MAX_ENERGY;
 
     $energy{ident $self} = $energy;
-    $condition{ident $self} = Midnight::Unit::Condition->by_ordinal($energy >> 4);
+    $condition{ident $self} = Goodnight::Unit::Condition->by_ordinal($energy >> 4);
 }
 
 sub increment_energy {

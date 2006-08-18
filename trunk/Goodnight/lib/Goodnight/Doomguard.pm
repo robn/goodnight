@@ -1,14 +1,14 @@
-package Midnight::Doomguard;
+package Goodnight::Doomguard;
 
 use warnings;
 use strict;
 
-use base qw(Midnight::Army);
+use base qw(Goodnight::Army);
 
-use Midnight::Doomguard::Orders;
-use Midnight::Location::Feature;
-use Midnight::Map::Direction;
-use Midnight::Race;
+use Goodnight::Doomguard::Orders;
+use Goodnight::Location::Feature;
+use Goodnight::Map::Direction;
+use Goodnight::Race;
 
 use Class::Std;
 
@@ -24,13 +24,13 @@ my $next_id = 1;
 #sub BUILD {
 #    my ($self, $ident, $args) = @_;
 #
-#    $args->{race} = Midnight::Race::FOUL;
+#    $args->{race} = Goodnight::Race::FOUL;
 #}
 
 sub START {
     my ($self, $ident, $args) = @_;
 
-    $self->set_race(Midnight::Race::FOUL);
+    $self->set_race(Goodnight::Race::FOUL);
 
     $id{$ident} = $next_id++;
 }
@@ -74,7 +74,7 @@ sub execute_move {
         return;
     }
 
-    my $direction = Midnight::Map::Direction::NORTH;
+    my $direction = Goodnight::Map::Direction::NORTH;
     for (0..7) {
         my $location = $self->get_game->get_map->get_looking_towards($self->get_location, $direction);
         if ($location->is_special) {
@@ -84,16 +84,16 @@ sub execute_move {
         $direction = $direction->turn_right;
     }
 
-    if ($orders{ident $self} == Midnight::Doomguard::Orders::FOLLOW) {
+    if ($orders{ident $self} == Goodnight::Doomguard::Orders::FOLLOW) {
         $self->follow_character;
     }
-    elsif ($orders{ident $self} == Midnight::Doomguard::Orders::GOTO) {
+    elsif ($orders{ident $self} == Goodnight::Doomguard::Orders::GOTO) {
         $self->follow_goto;
     }
-    elsif ($orders{ident $self} == Midnight::Doomguard::Orders::ROUTE) {
+    elsif ($orders{ident $self} == Goodnight::Doomguard::Orders::ROUTE) {
         $self->follow_route;
     }
-    elsif ($orders{ident $self} == Midnight::Doomguard::Orders::WANDER) {
+    elsif ($orders{ident $self} == Goodnight::Doomguard::Orders::WANDER) {
         $self->follow_wander;
     }
 }
@@ -153,8 +153,8 @@ sub wander {
     my $location;
     while (1) {
         $location = $self->get_game->get_map->get_in_front($self->get_location,
-                                                           Midnight::Map::Direction->by_ordinal($self->get_game->random(8)));
-        last if $location->get_feature != Midnight::Location::Feature::FROZEN_WASTE;
+                                                           Goodnight::Map::Direction->by_ordinal($self->get_game->random(8)));
+        last if $location->get_feature != Goodnight::Location::Feature::FROZEN_WASTE;
     }
 
     $self->move_to($location);
@@ -164,7 +164,7 @@ sub move_towards {
     my ($self, $location) = @_;
 
     if ($self->get_location != $location) {
-        my $direction = Midnight::Map::calc_direction($self->get_location, $location);
+        my $direction = Goodnight::Map::calc_direction($self->get_location, $location);
         my $destination;
 
         for (0..7) {
@@ -179,14 +179,14 @@ sub move_towards {
                 $destination = $self->get_game->get_map->get_in_front($self->get_location, $direction->turn_right);
             }
 
-            if ($destination->get_feature != Midnight::Location::Feature::FOREST and
-                $destination->get_feature != Midnight::Location::Feature::MOUNTAIN and
-                $destination->get_feature != Midnight::Location::Feature::FROZEN_WASTE) {
+            if ($destination->get_feature != Goodnight::Location::Feature::FOREST and
+                $destination->get_feature != Goodnight::Location::Feature::MOUNTAIN and
+                $destination->get_feature != Goodnight::Location::Feature::FROZEN_WASTE) {
                 next;
             }
         }
 
-        if ($destination->get_feature != Midnight::Location::Feature::FROZEN_WASTE) {
+        if ($destination->get_feature != Goodnight::Location::Feature::FROZEN_WASTE) {
             $self->move_to($destination);
         }
         else {
@@ -220,15 +220,15 @@ sub move_to {
     }
 
     my $cost;
-    if ($location->get_feature == Midnight::Location::Feature::FOREST or
-        $location->get_feature == Midnight::Location::Feature::MOUNTAIN) {
+    if ($location->get_feature == Goodnight::Location::Feature::FOREST or
+        $location->get_feature == Goodnight::Location::Feature::MOUNTAIN) {
         $cost = 8;
     }
     else {
         $cost = 2;
     }
 
-    if($self->get_type == Midnight::Army::Type::RIDERS) {
+    if($self->get_type == Goodnight::Army::Type::RIDERS) {
         $cost /= 2;
     }
 

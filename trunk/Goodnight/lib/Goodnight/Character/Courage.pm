@@ -1,4 +1,4 @@
-package Midnight::Character::Courage;
+package Goodnight::Character::Courage;
 
 use warnings;
 use strict;

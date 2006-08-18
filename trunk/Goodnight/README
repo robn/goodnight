@@ -1,4 +1,4 @@
-Midnight
+Goodnight
 
 The README is used to introduce the module and provide instructions on
 how to install the module, any machine dependencies it may have (for
@@ -25,21 +25,21 @@ SUPPORT AND DOCUMENTATION
 
 After installing, you can find documentation for this module with the perldoc command.
 
-    perldoc Midnight
+    perldoc Goodnight
 
 You can also look for information at:
 
     Search CPAN
-        http://search.cpan.org/dist/Midnight
+        http://search.cpan.org/dist/Goodnight
 
     CPAN Request Tracker:
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Midnight
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Goodnight
 
     AnnoCPAN, annotated CPAN documentation:
-        http://annocpan.org/dist/Midnight
+        http://annocpan.org/dist/Goodnight
 
     CPAN Ratings:
-        http://cpanratings.perl.org/d/Midnight
+        http://cpanratings.perl.org/d/Goodnight
 
 COPYRIGHT AND LICENCE
 

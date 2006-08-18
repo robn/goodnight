@@ -1,4 +1,4 @@
-package Midnight::Race;
+package Goodnight::Race;
 
 use warnings;
 use strict;

@@ -1,4 +1,4 @@
-package Midnight::Time;
+package Goodnight::Time;
 
 use warnings;
 use strict;

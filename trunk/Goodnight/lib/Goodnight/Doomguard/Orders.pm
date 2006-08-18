@@ -1,4 +1,4 @@
-package Midnight::Doomguard::Orders;
+package Goodnight::Doomguard::Orders;
 
 use warnings;
 use strict;

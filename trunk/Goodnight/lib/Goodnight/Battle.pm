@@ -1,11 +1,11 @@
-package Midnight::Battle;
+package Goodnight::Battle;
 
 use warnings;
 use strict;
 
-use Midnight::Army::Type;
-use Midnight::Location::Feature;
-use Midnight::Race;
+use Goodnight::Army::Type;
+use Goodnight::Location::Feature;
+use Goodnight::Race;
 
 use Class::Std;
 
@@ -46,12 +46,12 @@ sub add_guard {
     my $guard = $location{ident $self}->get_guard;
     return if not $guard or $guard->get_how_many == 0;
 
-    if ($guard->get_race == Midnight::Race::FOUL) {
+    if ($guard->get_race == Goodnight::Race::FOUL) {
         $self->add_foul_army($guard);
     }
 
     else {
-        if ($guard->get_type == Midnight::Army::Type::RIDERS) {
+        if ($guard->get_type == Goodnight::Army::Type::RIDERS) {
             $guard->set_success_chance(0x60);
         }
         else {
@@ -80,7 +80,7 @@ sub add_foul_army {
     my $location = $location{ident $self};
 
     my $fear_factor;
-    if ($army->get_type == Midnight::Army::Type::RIDERS) {
+    if ($army->get_type == Goodnight::Army::Type::RIDERS) {
         $fear_factor = $location->get_ice_fear / 4;
     }
     else {
@@ -88,8 +88,8 @@ sub add_foul_army {
     }
 
     my $success_chance = int $fear_factor;
-    if ($location->get_guard and $location->get_guard->get_race == Midnight::Race::FOUL) {
-        if ($location->get_feature == Midnight::Location::Feature::CITADEL) {
+    if ($location->get_guard and $location->get_guard->get_race == Goodnight::Race::FOUL) {
+        if ($location->get_feature == Goodnight::Location::Feature::CITADEL) {
             $success_chance += 0x20;
         }
         else {
@@ -110,8 +110,8 @@ sub add_free_army {
     my $success_chance = $army->get_energy;
 
     my $location = $location{ident $self};
-    if ($location->get_guard and $location->get_guard->get_race != Midnight::Race::FOUL) {
-        if ($location->get_feature == Midnight::Location::Feature::CITADEL) {
+    if ($location->get_guard and $location->get_guard->get_race != Goodnight::Race::FOUL) {
+        if ($location->get_feature == Goodnight::Location::Feature::CITADEL) {
             $success_chance += 0x20;
         }
         else {
@@ -119,12 +119,12 @@ sub add_free_army {
         }
     }
 
-    if ($army->get_type == Midnight::Army::Type::RIDERS) {
+    if ($army->get_type == Goodnight::Army::Type::RIDERS) {
         $success_chance += $location->riders_battle_bonus;
     }
 
-    if ($location->get_feature == Midnight::Location::Feature::FOREST and
-        $character->get_race == Midnight::Race::FEY and $character->is_on_horse) {
+    if ($location->get_feature == Goodnight::Location::Feature::FOREST and
+        $character->get_race == Goodnight::Race::FEY and $character->is_on_horse) {
         $success_chance += 0x40;
     }
 
@@ -197,10 +197,10 @@ sub determine_result {
     my $winner = $winner{ident $self};
 
     if ($foul{ident $self}->size == 0) {
-        $winner = Midnight::Race::FREE;
+        $winner = Goodnight::Race::FREE;
     }
     elsif ($free{ident $self}->size == 0) {
-        $winner = Midnight::Race::FOUL;
+        $winner = Goodnight::Race::FOUL;
     }
     else {
         undef $winner;
@@ -213,10 +213,10 @@ sub determine_result {
     my $location = $location{ident $self};
     if ($location->get_guard) {
         if ($winner) {
-            if (($winner == Midnight::Race::FOUL and
-                 $location->get_guard->get_race != Midnight::Race::FOUL) or
-                ($winner != Midnight::Race::FOUL and
-                 $location->get_guard->get_race == Midnight::Race::FOUL)) {
+            if (($winner == Goodnight::Race::FOUL and
+                 $location->get_guard->get_race != Goodnight::Race::FOUL) or
+                ($winner != Goodnight::Race::FOUL and
+                 $location->get_guard->get_race == Goodnight::Race::FOUL)) {
                 $location->get_guard->switch_sides;
             }
         }
@@ -229,7 +229,7 @@ sub determine_result {
         $character->decrement_energy(0x14);
     }
 
-    if ($winner == Midnight::Race::FOUL) {
+    if ($winner == Goodnight::Race::FOUL) {
         $self->what_happened_to_free_lords;
     }
 }
@@ -246,7 +246,7 @@ sub what_happened_to_free_lords {
             do {
                 $direction = Map::Direction->by_ordinal($game{ident $self}->random(8));
                 $destination = $location{ident $self}->get_map->get_in_front($character->get_location, $direction);
-            } while ($destination->get_feature == Midnight::Location::Feature::FROZEN_WASTE);
+            } while ($destination->get_feature == Goodnight::Location::Feature::FROZEN_WASTE);
 
             $character->set_location($destination);
         }

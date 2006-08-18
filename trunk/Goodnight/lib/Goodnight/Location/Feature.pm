@@ -1,4 +1,4 @@
-package Midnight::Location::Feature;
+package Goodnight::Location::Feature;
 
 use warnings;
 use strict;

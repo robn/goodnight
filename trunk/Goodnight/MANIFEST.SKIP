@@ -5,4 +5,4 @@
 \.bak$
 ^MANIFEST\.SKIP$
 .svn/
-^Midnight-[0-9\.]+.tar.gz$
+^Goodnight-[0-9\.]+.tar.gz$

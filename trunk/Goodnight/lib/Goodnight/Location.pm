@@ -1,11 +1,11 @@
-package Midnight::Location;
+package Goodnight::Location;
 
 use warnings;
 use strict;
 
-use Midnight::Location::Fear;
-use Midnight::Location::Feature;
-use Midnight::Map;
+use Goodnight::Location::Fear;
+use Goodnight::Location::Feature;
+use Goodnight::Map;
 
 use Class::Std;
 
@@ -43,11 +43,11 @@ sub as_string {
 
     if ($domain{ident $self}) {
         my $article;
-        if ($feature == Midnight::Location::Feature::MOUNTAIN or
-            $feature == Midnight::Location::Feature::DOWNS or
-            $feature == Midnight::Location::Feature::FROZEN_WASTE or
-            $feature == Midnight::Location::Feature::ARMY or
-            $feature == Midnight::Location::Feature::PLAINS) {
+        if ($feature == Goodnight::Location::Feature::MOUNTAIN or
+            $feature == Goodnight::Location::Feature::DOWNS or
+            $feature == Goodnight::Location::Feature::FROZEN_WASTE or
+            $feature == Goodnight::Location::Feature::ARMY or
+            $feature == Goodnight::Location::Feature::PLAINS) {
             $article = " ";
         }
         else {
@@ -57,15 +57,15 @@ sub as_string {
         return "$article$feature in the Domain of $area";
     }
 
-    if ($feature == Midnight::Location::Feature::HENGE) {
+    if ($feature == Goodnight::Location::Feature::HENGE) {
         return $area . "henge";
     }
 
-    if ($feature == Midnight::Location::Feature::LAKE) {
+    if ($feature == Goodnight::Location::Feature::LAKE) {
         return "Lake $area";
     }
 
-    if ($feature == Midnight::Location::Feature::FROZEN_WASTE) {
+    if ($feature == Goodnight::Location::Feature::FROZEN_WASTE) {
         return "the Frozen Wastes";
     }
 
@@ -91,8 +91,8 @@ sub is_special {
 sub set_guard {
     my ($self, $guard) = @_;
 
-    if ($feature{ident $self} == Midnight::Location::Feature::KEEP or
-        $feature{ident $self} == Midnight::Location::Feature::CITADEL) {
+    if ($feature{ident $self} == Goodnight::Location::Feature::KEEP or
+        $feature{ident $self} == Goodnight::Location::Feature::CITADEL) {
         $guard{ident $self} = $guard;
     }
 }
@@ -102,8 +102,8 @@ sub add_army {
 
     push @{$armies{ident $self}}, $army;
 
-    if ($feature{ident $self} == Midnight::Location::Feature::PLAINS) {
-        $feature{ident $self} = Midnight::Location::Feature::ARMY;
+    if ($feature{ident $self} == Goodnight::Location::Feature::PLAINS) {
+        $feature{ident $self} = Goodnight::Location::Feature::ARMY;
     }
 }
 
@@ -121,8 +121,8 @@ sub remove_army {
 
     splice @{$armies}, $index, 1;
 
-    if ($feature{ident $self} == Midnight::Location::Feature::ARMY and @{$armies} == 0) {
-        $feature{ident $self} = Midnight::Location::Feature::PLAINS;
+    if ($feature{ident $self} == Goodnight::Location::Feature::ARMY and @{$armies} == 0) {
+        $feature{ident $self} = Goodnight::Location::Feature::PLAINS;
     }
 }
 
@@ -131,9 +131,9 @@ sub add_character {
 
     push @{$characters{ident $self}}, $character;
 
-    if ($feature{ident $self} == Midnight::Location::Feature::PLAINS and
+    if ($feature{ident $self} == Goodnight::Location::Feature::PLAINS and
         ($character->get_riders->get_how_many > 0 or $character->get_warriors->get_how_many > 0)) {
-        $feature{ident $self} = Midnight::Location::Feature::ARMY;
+        $feature{ident $self} = Goodnight::Location::Feature::ARMY;
     }
 }
 
@@ -151,7 +151,7 @@ sub remove_character {
         splice @{$characters}, $index, 1;
     }
 
-    if ($feature{ident $self} == Midnight::Location::Feature::ARMY) {
+    if ($feature{ident $self} == Goodnight::Location::Feature::ARMY) {
         for my $character (@{$characters}) {
             if ($character->get_riders->get_how_many > 0 or
                 $character->get_warriors->get_how_many > 0) {
@@ -159,14 +159,14 @@ sub remove_character {
             }
         }
 
-        $feature{ident $self} = Midnight::Location::Feature::PLAINS;
+        $feature{ident $self} = Goodnight::Location::Feature::PLAINS;
     }
 }
 
 sub riders_battle_bonus {
     my ($self) = @_;
 
-    if ($feature{ident $self} == Midnight::Location::Feature::MOUNTAIN) {
+    if ($feature{ident $self} == Goodnight::Location::Feature::MOUNTAIN) {
         return 0x20;
     }
     else {
@@ -181,13 +181,13 @@ sub get_ice_fear {
 
     my $fear;
     if ($game->MORKIN->is_alive) {
-        if (Midnight::Map::calc_distance($self, $game->MORKIN->get_location) == 0) {
+        if (Goodnight::Map::calc_distance($self, $game->MORKIN->get_location) == 0) {
             $ice_fear{ident $self} =
-                0x1ff - Midnight::Map::calc_distance($self, $self->get_map->TOWER_OF_DESPAIR) * 4;
+                0x1ff - Goodnight::Map::calc_distance($self, $self->get_map->TOWER_OF_DESPAIR) * 4;
             return $ice_fear{ident $self};
         }
         else {
-            $fear = Midnight::Map::calc_distance($game->MORKIN->get_location,
+            $fear = Goodnight::Map::calc_distance($game->MORKIN->get_location,
                                                  $self->get_map->TOWER_OF_DESPAIR);
         }
     }
@@ -196,7 +196,7 @@ sub get_ice_fear {
     }
 
     if ($game->LUXOR->is_alive) {
-        $fear += Midnight::Map::calc_distance($self, $game->LUXOR->get_location);
+        $fear += Goodnight::Map::calc_distance($self, $game->LUXOR->get_location);
     }
     else {
         $fear += 0x7f;
@@ -214,7 +214,7 @@ sub describe_ice_fear {
 
     $self->get_ice_fear;
 
-    return Midnight::Location::Fear->by_ordinal((7 - $ice_fear{ident $self} / 0x40) % 8);
+    return Goodnight::Location::Fear->by_ordinal((7 - $ice_fear{ident $self} / 0x40) % 8);
 }
 
 sub save {

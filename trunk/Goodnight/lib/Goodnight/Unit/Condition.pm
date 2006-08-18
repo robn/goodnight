@@ -1,4 +1,4 @@
-package Midnight::Unit::Condition;
+package Goodnight::Unit::Condition;
 
 use warnings;
 use strict;
