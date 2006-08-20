@@ -99,7 +99,7 @@ map { $commands{$_} = $_; delete $conflicts{$_} } keys %command_defs;
 map { $commands{$_} = $command_shortcuts{$_}; delete $conflicts{$_} } keys %command_shortcuts;
 
 my $cmd_regex_str = "(?:" . join("|", map { s/([?])/\\$1/g; $_ } sort keys %commands) . ")";
-my $cmd_regex = qr/^$cmd_regex_str(?: |$)/i;
+my $cmd_regex = qr/^$cmd_regex_str(?:\s|$)/i;
 
 my $game = Goodnight::Game->new;
 my $map = $game->get_map;
@@ -109,9 +109,11 @@ my $me = $game->LUXOR;
 look(qw(where ahead time));
 
 while (! $game->is_game_over) {
-    my $cmd;
-    while ($cmd = prompt "What now? ", -until => $cmd_regex) {
-        next if $cmd eq "";
+    my $line;
+    while ($line = prompt "What now? ", -until => $cmd_regex) {
+        next if $line eq "";
+
+        my ($cmd) = split /\s+/, $line;
 
         if (exists $conflicts{$cmd}) {
             say "'$cmd' is ambiguous. Did you mean: " . join(" ", sort keys %{$conflicts{$cmd}});
@@ -121,7 +123,9 @@ while (! $game->is_game_over) {
         }
     }
 
-    ($cmd, my @args) = split /\s+/, $cmd;
+    say and quit() if $line eq "";
+
+    my ($cmd, @args) = split /\s+/, $line;
 
     my $defs = $command_defs{$commands{$cmd}};
 
