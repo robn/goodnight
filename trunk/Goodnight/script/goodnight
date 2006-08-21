@@ -54,7 +54,7 @@ my %command_defs = (
     hide        => { call => \&hide },
     show        => { call => \&show },
 
-    switch      => { call => \&switch },
+    switch      => { call => \&switch, complete => \&switch_complete },
 
     help        => { call => \&help },
 
@@ -111,9 +111,13 @@ look(qw(where ahead time));
 sub complete {
     my ($input, $before, $after, @args) = @_;
 
-    return map { "$_ " } keys %command_defs if @args < 2;
+    return map { "$_ " } keys %command_defs if @args == 0 or (@args == 1 and not $after);
 
     my $cmd = shift @args;
+
+    if (exists $command_defs{$cmd}->{complete}) {
+        return $command_defs{$cmd}->{complete}->();
+    }
 
     return;
 }
@@ -351,20 +355,30 @@ sub fight {
     say "He can't fight!";
 }
 
-sub switch {
-    my ($who) = @_;
-    
+sub switch_complete {
+    return keys %{switch_characters()};
+}
+
+sub switch_characters {
     my %controlled = map { lc($_->get_name) => $_ }
                      grep { $game->is_controllable($_) }
                      @{$game->get_characters};
+    
+    return \%controlled;
+}
+
+sub switch {
+    my ($who) = @_;
+
+    my $controlled = switch_characters();
 
     if (not $who) {
-        say "Characters you control: " . join(" ", map { cap($_) } keys %controlled);
+        say "Characters you control: " . join(" ", map { cap($_) } keys %{$controlled});
         return;
     }
 
-    if (exists $controlled{lc $who}) {
-        $me = $controlled{lc $who};
+    if (exists $controlled->{lc $who}) {
+        $me = $controlled->{lc $who};
         look(qw(where ahead time));
         return;
     }
