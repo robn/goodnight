@@ -257,7 +257,7 @@ sub what_happened_to_free_lords {
 sub as_string {
     my ($self) = @_;
 
-    return "A battle in the domain of " . $location{$self}->get_domain;
+    return "A battle in the domain of " . $location{ident $self}->get_domain;
 }
 
 use overload q{""} => \&as_string;
