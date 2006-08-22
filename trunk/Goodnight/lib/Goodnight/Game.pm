@@ -218,7 +218,7 @@ sub calc_night_activity {
     }
             
     for my $army (@{$armies{ident $self}}) {
-        if ($army->get_race == Goodnight::Race::FOUL) {
+        if ($army->get_race != Goodnight::Race::FOUL) {
             my $location = $army->get_location;
             $location->set_special(0);
             if (@{$location->get_armies} > 0 and

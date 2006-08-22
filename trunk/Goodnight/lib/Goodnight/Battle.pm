@@ -5,6 +5,7 @@ use strict;
 
 use Goodnight::Army::Type;
 use Goodnight::Location::Feature;
+use Goodnight::Map::Direction;
 use Goodnight::Race;
 
 use Class::Std;
@@ -244,7 +245,7 @@ sub what_happened_to_free_lords {
             my ($direction, $destination);
 
             do {
-                $direction = Map::Direction->by_ordinal($game{ident $self}->random(8));
+                $direction = Goodnight::Map::Direction->by_ordinal($game{ident $self}->random(8));
                 $destination = $location{ident $self}->get_map->get_in_front($character->get_location, $direction);
             } while ($destination->get_feature == Goodnight::Location::Feature::FROZEN_WASTE);
 
