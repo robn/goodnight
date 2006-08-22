@@ -442,7 +442,7 @@ sub night {
     my $domains = $game->get_battle_domains;
     if (@{$domains} > 0) {
         my $count = @{$domains};
-        say inflect "The bloody sword of battle brings death in the PL(Domain,$count) of " .
+        say inflect "The bloody sword of battle brings death in the PL(domain,$count) of " .
             join(", ", @{$domains}[0..$count-2]) . ($count > 1 ? " and " : "") .
             $domains->[-1] . ".";
     }
