@@ -16,7 +16,7 @@ my %feature     : ATTR( :get<feature> :init_arg<feature> );
 my %object      : ATTR( :name<object> );
 my %area        : ATTR( :get<domain> :init_arg<area> );
 my %domain      : ATTR( :get<domain_flag> :init_arg<domain> );
-my %special     : ATTR( :init_arg<special> );
+my %special     : ATTR( :init_arg<special> :set<special> );
 my %guard       : ATTR( :get<guard> );
 my %armies      : ATTR( :get<armies> );
 my %characters  : ATTR( :get<characters> );
@@ -73,19 +73,6 @@ sub as_string {
     $feature_string =~ s/^([a-z])/uc($1)/e;
     return "the $feature_string of $area";
 }
-
-sub equals {
-    my ($a, $b) = @_;
-
-    return 0 if ref $a ne ref $b;
-    return 0 if ident $a != ident $b;
-
-    return 1;
-}
-
-use overload
-    q{""} => \&as_string,
-    q{==} => \&equals;
 
 sub get_map {
     my ($self) = @_;
@@ -233,5 +220,19 @@ sub save {
 
 sub load {
 }
+
+sub equals {
+    my ($a, $b) = @_;
+
+    return 0 if ref $a ne ref $b;
+    return 0 if ident $a != ident $b;
+
+    return 1;
+}
+
+use overload
+    q{""} => \&as_string,
+    q{==} => \&equals,
+    q{!=} => sub { ! $_[0]->equals(@_) };
 
 1;

@@ -185,7 +185,7 @@ sub calc_night_activity {
         if ($character->is_alive and ! $character->is_hidden) {
             $character->get_location->set_special(1);
             $character->set_battle(undef);
-            $character->set_enemy_killed = 0;
+            $character->set_enemy_killed(0);
             $character->get_riders->set_casualties(0);
             $character->get_riders->set_enemy_killed(0);
             $character->get_warriors->set_casualties(0);
@@ -210,7 +210,7 @@ sub calc_night_activity {
         my $location = $character->get_location;
         $location->set_special(0);
         if ((@{$location->get_armies} > 0 or
-                (not $location->get_guard and
+                ($location->get_guard and
                  $location->get_guard->get_race == Goodnight::Race::FOUL)) and
             not exists $battles{ident $self}->{ident $location}) {
             $battles{ident $self}->{ident $location} = Goodnight::Battle->new({location => $location});

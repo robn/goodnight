@@ -47,4 +47,17 @@ sub decrement_energy {
     $self->set_energy($self->get_energy - $decrement);
 }
 
+sub equals {
+    my ($a, $b) = @_;
+
+    return 0 if ref $a ne ref $b;
+    return 0 if ident $a != ident $b;
+
+    return 1;
+}
+
+use overload
+    q{==} => \&equals,
+    q{!=} => sub { ! $_[0]->equals(@_) };
+
 1;

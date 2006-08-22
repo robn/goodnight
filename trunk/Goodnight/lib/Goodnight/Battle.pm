@@ -35,7 +35,7 @@ sub START {
         }
     }
 
-    for my $army (@{location->get_armies}) {
+    for my $army (@{$location->get_armies}) {
         $self->add_foul_army($army);
     }
 }
@@ -175,7 +175,7 @@ sub skirmish {
             my $enemy_index = $game{ident $self}->random(@{$enemies});
             my $enemy = $enemies->[$enemy_index];
 
-            if ($game{ident $self}->random(256) > $enemy->get_success_chance) {
+            if (($game{ident $self}->random(256)) > $enemy->get_success_chance) {
                 $enemy_killed += 5;
 
                 $enemy->add_casualties(5);
@@ -196,10 +196,10 @@ sub determine_result {
 
     my $winner = $winner{ident $self};
 
-    if ($foul{ident $self}->size == 0) {
+    if (@{$foul{ident $self}} == 0) {
         $winner = Goodnight::Race::FREE;
     }
-    elsif ($free{ident $self}->size == 0) {
+    elsif (@{$free{ident $self}} == 0) {
         $winner = Goodnight::Race::FOUL;
     }
     else {

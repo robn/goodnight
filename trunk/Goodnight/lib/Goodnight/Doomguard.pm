@@ -16,7 +16,7 @@ use constant MAX_MOVE_COUNT => 6;
 
 my %orders              : ATTR( :get<orders> :init_arg<orders> );
 my %target              : ATTR( :get<target> :init_arg<target> );
-my %move_count          : ATTR( :get<move_count> );
+my %move_count          : ATTR( :get<move_count> :default(0) );
 my %id                  : ATTR;
 
 my $next_id = 1;
@@ -94,7 +94,7 @@ sub execute_move {
         $self->follow_route;
     }
     elsif ($orders{ident $self} == Goodnight::Doomguard::Orders::WANDER) {
-        $self->follow_wander;
+        $self->wander;
     }
 }
 
