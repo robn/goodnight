@@ -6,7 +6,7 @@ use strict;
 use Goodnight::Game;
 
 use IO::Prompt;
-use Lingua::EN::Inflect qw(PL PL_V);
+use Lingua::EN::Inflect qw(inflect);
 
 require Text::Wrap;
 sub say (@) {
@@ -56,6 +56,9 @@ my %command_defs = (
 
     switch      => { call => \&switch,  complete => \&switch_complete },
     recruit     => { call => \&recruit, complete => \&recruit_complete },
+
+    night       => { call => \&night,
+                     look => [qw(where ahead time)] },
 
     help        => { call => \&help },
 
@@ -418,6 +421,35 @@ sub recruit {
     }
 
     say "You can't recruit him!";
+}
+
+sub night {
+    $game->night();
+
+    say "Night has fallen and the Foul are abroad!";
+
+    my $day = $game->get_day;
+    say cap(inflect "NUMWORDS($day) PL(day,$day) PL_V(has,$day) passed since the War of the Solstice began.");
+
+    if ($game->is_game_over) {
+        say $game->get_status .
+            ($game->get_status->get_winner == Goodnight::Race::FOUL) ? " Victory to Doomdark!" :
+                                                                       " Victory to the Free!";
+    
+        quit();
+    }
+
+    my $domains = $game->get_battle_domains;
+    if (@{$domains} > 0) {
+        my $count = @{$domains};
+        say inflect "The bloody sword of battle brings death in the PL(Domain,$count) of " .
+            join(", ", @{$domains}[0..$count-2]) . ($count > 1 ? " and " : "") .
+            $domains->[-1] . ".";
+    }
+
+    while(not prompt "Do you seek dawn? ", -yn) { }
+
+    $game->dawn();
 }
 
 sub help {

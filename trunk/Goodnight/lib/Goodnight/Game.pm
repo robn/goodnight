@@ -258,6 +258,13 @@ sub check_game_over {
     }
 }
 
+sub get_battles {
+    my ($self) = @_;
+
+    my @battles = values %{$battles{ident $self}};
+    return \@battles;
+}
+
 sub get_battle_domains {
     my ($self) = @_;
 
@@ -267,7 +274,8 @@ sub get_battle_domains {
         $domains{ident $domain} = $domain;
     }
 
-    return \(values %domains);
+    my @domains = values %domains;
+    return \@domains;
 }
 
 sub is_game_over {
