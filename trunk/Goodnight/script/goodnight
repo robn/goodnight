@@ -426,10 +426,15 @@ sub recruit {
 sub night {
     $game->night();
 
+    say;
     say "Night has fallen and the Foul are abroad!";
 
     my $day = $game->get_day;
     say cap(inflect "NUMWORDS($day) PL(day,$day) PL_V(has,$day) passed since the War of the Solstice began.");
+
+    say;
+
+    sleep 1;
 
     if ($game->is_game_over) {
         say $game->get_status .
@@ -445,11 +450,18 @@ sub night {
         say inflect "The bloody sword of battle brings death in the PL(domain,$count) of " .
             join(", ", @{$domains}[0..$count-2]) . ($count > 1 ? " and " : "") .
             $domains->[-1] . ".";
+
+        say;
     }
 
-    while(not prompt "Do you seek dawn? ", -yn) { }
+    sleep 1;
 
     $game->dawn();
+
+    say "Dawn breaks.";
+    say;
+
+    return;
 }
 
 sub help {
