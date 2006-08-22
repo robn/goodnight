@@ -312,30 +312,39 @@ sub describe_battle {
     my $riders = $riders{ident $self};
     my $warriors = $warriors{ident $self};
 
+    my $named = 0;
+
     my $desc = "In the battle of " . $battle->get_location->get_domain . " ";
 
     if ($riders->get_casualties != 0 or $warriors->get_casualties != 0) {
-        $desc .= $self->get_name . " lost ";
+        $desc .= $self->get_title . " lost ";
         if ($riders->get_casualties != 0) {
             $desc .= $riders->get_casualties . " riders";
         }
-        if ($riders->get_casualties != 0 or $warriors->get_casualties != 0) {
+        if ($riders->get_casualties != 0 and $warriors->get_casualties != 0) {
             $desc .= " and ";
         }
         if ($warriors->get_casualties != 0) {
             $desc .= $warriors->get_casualties . " warriors";
         }
         $desc .= ". ";
+
+        $named = 1;
     }
 
-    $desc .= $self->get_name . " alone slew ";
-    $desc .= $self->get_enemy_killed . " of the Enemy. ";
+    $desc .= ($named ? $self->get_name : $self->get_title);
+    if ($self->get_enemy_killed > 0) {
+        $desc .= " alone slew " .  $self->get_enemy_killed .  " of the Enemy. ";
+    }
+    else {
+        $desc .= " slew none of the Enemy. ";
+    }
 
     if ($riders->get_enemy_killed != 0) {
-        $desc .= "His riders killed " . $riders->get_enemy_killed . " of the enemy. ";
+        $desc .= "His riders slew " . $riders->get_enemy_killed . " of the enemy. ";
     }
     if ($warriors->get_enemy_killed != 0) {
-        $desc .= "His warriors killed " . $warriors->get_enemy_killed . " of the enemy. ";
+        $desc .= "His warriors slew " . $warriors->get_enemy_killed . " of the enemy. ";
     }
 
     if ($battle->get_winner) {
