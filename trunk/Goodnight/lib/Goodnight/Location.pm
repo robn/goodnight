@@ -74,7 +74,18 @@ sub as_string {
     return "the $feature_string of $area";
 }
 
-use overload q{""} => \&as_string;
+sub equals {
+    my ($a, $b) = @_;
+
+    return 0 if ref $a ne ref $b;
+    return 0 if ident $a != ident $b;
+
+    return 1;
+}
+
+use overload
+    q{""} => \&as_string,
+    q{==} => \&equals;
 
 sub get_map {
     my ($self) = @_;
