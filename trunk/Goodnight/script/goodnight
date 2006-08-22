@@ -10,6 +10,11 @@ use Lingua::EN::Inflect qw(inflect);
 
 require Text::Wrap;
 sub say (@) {
+    if (@_ == 0) {
+        print "\n";
+        return;
+    }
+
     local $Text::Wrap::columns;
     $Text::Wrap::columns = 80;
 
