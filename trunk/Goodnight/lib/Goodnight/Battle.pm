@@ -172,10 +172,10 @@ sub skirmish {
     my $i = 0;
     while (@{$enemies} > 0 and $i < $hits) {
         if ($game{ident $self}->random(256) < $success_chance) {
-            my $enemy_index = $game{ident $self}->random(@{$enemies});
+            my $enemy_index = $game{ident $self}->random(scalar @{$enemies});
             my $enemy = $enemies->[$enemy_index];
 
-            if (($game{ident $self}->random(256)) > $enemy->get_success_chance) {
+            if ($game{ident $self}->random(256) > $enemy->get_success_chance) {
                 $enemy_killed += 5;
 
                 $enemy->add_casualties(5);
