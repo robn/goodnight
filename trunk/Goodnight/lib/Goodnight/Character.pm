@@ -517,10 +517,8 @@ sub clear_killed {
     }
 }
 
-use overload
-    q{""}  => \&get_title,
-#    q{""}  => sub { return $_[0]->get_title . " [" . $_[0]->get_location->get_x . "," . $_[0]->get_location->get_y . "]" },
-    q{<=>} => sub { ref $_[0] eq ref $_[1] ? $_[0]->get_id <=> $_[1]->get_id : -1 };
+use overload q{""}  => \&get_title;
+#use overload q{""}  => sub { return $_[0]->get_title . " [" . $_[0]->get_location->get_x . "," . $_[0]->get_location->get_y . "]" },
 
 sub save {
 }

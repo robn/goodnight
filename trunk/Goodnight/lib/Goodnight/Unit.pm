@@ -58,6 +58,6 @@ sub equals {
 
 use overload
     q{==} => \&equals,
-    q{!=} => sub { ! $_[0]->equals(@_) };
+    q{!=} => sub { ! (shift)->equals(@_) };
 
 1;
