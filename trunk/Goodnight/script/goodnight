@@ -439,7 +439,7 @@ sub night {
 
     say;
 
-    sleep 1;
+    #sleep 1;
 
     if ($game->is_game_over) {
         say $game->get_status .
@@ -459,7 +459,14 @@ sub night {
         say;
     }
 
-    sleep 1;
+    for my $c (@{$game->get_characters}) {
+        next if not $c->get_battle;
+        say $c->describe_battle;
+    }
+
+    say if @{$domains} > 0;
+
+    #sleep 1;
 
     $game->dawn();
 
