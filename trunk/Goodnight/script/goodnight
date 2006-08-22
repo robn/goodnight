@@ -54,7 +54,8 @@ my %command_defs = (
     hide        => { call => \&hide },
     show        => { call => \&show },
 
-    switch      => { call => \&switch, complete => \&switch_complete },
+    switch      => { call => \&switch,  complete => \&switch_complete },
+    recruit     => { call => \&recruit, complete => \&recruit_complete },
 
     help        => { call => \&help },
 
@@ -384,6 +385,39 @@ sub switch {
     }
 
     say "You can't control him!";
+}
+
+sub recruit_complete {
+    return keys %{recruit_characters()};
+}
+
+sub recruit_characters {
+    my %recruitable = map { lc($_->get_name) => $_ }
+                      grep { $me->can_recruit($_) }
+                      @{$me->get_location->get_characters};
+
+    return \%recruitable;
+}
+
+sub recruit {
+    my ($who) = @_;
+
+    my $recruitable = recruit_characters();
+
+    if (not $who) {
+        say "Recruitable characters: " . join(" ", map { cap($_) } keys %{$recruitable});
+        return;
+    }
+
+    if (exists $recruitable->{lc $who}) {
+        my $c = $recruitable->{lc $who};
+        $me->recruit($c);
+        $me = $c;
+        look(qw(where ahead time));
+        return;
+    }
+
+    say "You can't recruit him!";
 }
 
 sub help {
