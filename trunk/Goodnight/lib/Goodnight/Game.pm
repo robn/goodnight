@@ -105,12 +105,13 @@ sub is_moon_ring_controlled {
 sub night {
     my ($self) = @_;
 
-    $self->check_special_conditions;
     if (! $game_over{ident $self}) {
         $day{ident $self}++;
         $self->calc_doomdarks_citadels;
         $self->calc_night_activity;
     }
+
+    $self->check_special_conditions;
 }
 
 sub dawn {
@@ -662,6 +663,8 @@ sub random {
     [ 0, 1000, Goodnight::Army::Type::RIDERS, Goodnight::Doomguard::Orders::GOTO, 6, 30, 6 ],
     [ 0, 1000, Goodnight::Army::Type::RIDERS, Goodnight::Doomguard::Orders::GOTO, 6, 27, 6 ],
     [ 0, 1000, Goodnight::Army::Type::RIDERS, Goodnight::Doomguard::Orders::GOTO, 6, 26, 7 ],
+
+    [ 0, 1000, Goodnight::Army::Type::RIDERS, Goodnight::Doomguard::Orders::FOLLOW, "LUXOR", 12, 40 ],
 );
 
 1;
