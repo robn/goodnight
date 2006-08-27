@@ -7,6 +7,7 @@ use Goodnight::Game;
 
 use IO::Prompt;
 use Lingua::EN::Inflect qw(inflect);
+use Scalar::Util qw(refaddr);
 
 require Text::Wrap;
 sub say (@) {
@@ -178,7 +179,14 @@ sub cap {
 sub look {
     if (! $me->is_alive) {
         say $me;
-        say cap($me->get_killed) . " slew him.";
+        if (defined $me->get_killed) {
+            say cap($me->get_killed) . " slew him.";
+        }
+        else {
+            say "He was slain in the battle of " .
+                $me->get_battle->get_location->get_domain . ".";
+        }
+            
         return;
     }
 
@@ -194,7 +202,7 @@ sub look {
     if ($want{where}) {
         say cap($me);
 
-        my $msg = "He stands " . $location->get_feature->at . " $location " .
+        my $msg = "He stands " . $location->get_feature->get_at . " $location " .
                   "looking $direction";
         
         if ($location->get_domain != $looking->get_domain or
@@ -441,14 +449,6 @@ sub night {
 
     #sleep 1;
 
-    if ($game->is_game_over) {
-        say $game->get_status .
-            ($game->get_status->get_winner == Goodnight::Race::FOUL) ? " Victory to Doomdark!" :
-                                                                       " Victory to the Free!";
-    
-        quit();
-    }
-
     my $domains = $game->get_battle_domains;
     if (@{$domains} > 0) {
         my $count = @{$domains};
@@ -459,12 +459,30 @@ sub night {
         say;
     }
 
+    # !!! HERE
+    # get all of lasts nights battles, then loop the characters
+    # if their battle was done last night, then dump the description
+    # if they're now dead, they died last night, report on it
+
+    my %battles = map { refaddr($_) => $_ } @{$game->get_battles};
+
     for my $c (@{$game->get_characters}) {
-        next if not $c->get_battle;
-        say $c->describe_battle;
+        my $battle = $c->get_battle;
+        if ($battle and exists $battles{refaddr $battle}) {
+            say $c->describe_battle;
+            say "$c is dead." if not $c->is_alive;
+        }
     }
 
-    say if @{$domains} > 0;
+    #say if @{$domains} > 0;
+
+    if ($game->is_game_over) {
+        my $status = $game->get_status;
+        say $status . (($status->winner == Goodnight::Race::FOUL) ? " Victory to Doomdark!" :
+                                                                    " Victory to the Free!");
+    
+        quit();
+    }
 
     #sleep 1;
 
