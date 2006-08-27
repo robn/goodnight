@@ -526,8 +526,12 @@ sub clear_killed {
     }
 }
 
-use overload q{""}  => \&get_title;
-#use overload q{""}  => sub { return $_[0]->get_title . " [" . $_[0]->get_location->get_x . "," . $_[0]->get_location->get_y . "]" },
+sub as_string {
+    (shift)->get_title(@_);
+}
+
+use overload q{""}  => \&as_string;
+#use overload q{""}  => sub { return $_[0]->as_string . " [" . $_[0]->get_location->get_x . "," . $_[0]->get_location->get_y . "]" },
 
 sub save {
 }
