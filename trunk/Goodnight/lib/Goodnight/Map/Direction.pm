@@ -28,7 +28,7 @@ sub turn_left {
 sub is_diagonal {
     my ($direction) = @_;
 
-    return $direction->x != 0 and $direction->y != 0;
+    return $direction->get_x != 0 and $direction->get_y != 0;
 }
 
 1;

@@ -67,8 +67,8 @@ sub set_location {
 sub get_in_front {
     my ($self, $location, $direction) = @_;
 
-    my $x = $location->get_x + $direction->x;
-    my $y = $location->get_y + $direction->y;
+    my $x = $location->get_x + $direction->get_x;
+    my $y = $location->get_y + $direction->get_y;
 
     return $self->get_location($x, $y);
 }
