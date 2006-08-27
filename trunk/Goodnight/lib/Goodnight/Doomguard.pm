@@ -240,9 +240,10 @@ sub as_string {
     my ($self) = @_;
 
     return
-        $id{ident $self} .
+        "#" . $id{ident $self} .
         " Doomguard (" . $self->SUPER::as_string .
-        " at " . $self->get_location . "): " .
+        " " . $self->get_location->get_feature->get_at .
+        " " . $self->get_location . "): " .
         $orders{ident $self} . " " .
         ($target{ident $self} ? $target{ident $self}->as_string : "");
 }
