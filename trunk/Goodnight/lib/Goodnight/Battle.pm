@@ -139,6 +139,12 @@ sub add_free_army {
 sub run {
     my ($self) = @_;
 
+    use Perl6::Say;
+    say "a challenger appears!";
+    say "char: $_" for @{$characters{ident $self}};
+    say "free: $_" for @{$free{ident $self}};
+    say "foul: $_" for @{$foul{ident $self}};
+
     for my $character (@{$characters{ident $self}}) {
         $character->set_enemy_killed(
             $self->skirmish($character->get_strength,
