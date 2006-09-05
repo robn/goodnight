@@ -478,8 +478,8 @@ sub night {
 
     if ($game->is_game_over) {
         my $status = $game->get_status;
-        say $status . (($status->winner == Goodnight::Race::FOUL) ? " Victory to Doomdark!" :
-                                                                    " Victory to the Free!");
+        say $status . (($status->get_winner == Goodnight::Race::FOUL) ? " Victory to Doomdark!" :
+                                                                        " Victory to the Free!");
     
         quit();
     }
