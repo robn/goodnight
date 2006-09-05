@@ -15,10 +15,13 @@ my %type                : ATTR( :get<type> :init_arg<type> );
 my %success_chance      : ATTR( :get<success_chance> :set<success_chance> );
 my %casualties          : ATTR( :get<casualties> :set<casualties> );
 
-sub BUILD {
-    my ($self, $ident, $args) = @_;
+sub PREBUILD {
+    my ($class, $args) = @_;
 
-    $args->{energy} ||= 88;
+    my %new_args = (%{$args});
+    $new_args{energy} ||= 88;
+
+    return \%new_args;
 }
 
 sub increase_numbers {

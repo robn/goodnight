@@ -8,8 +8,8 @@ my $builder = Module::Build->new(
     dist_author         => 'Robert Norris <rob@cataclysm.cx>',
     dist_version_from   => 'lib/Goodnight.pm',
     requires => {
-        'Class::Std' => 0,
-        'Class::Constant' => '0.04',
+        'Class::Std' => '0.09',
+        'Class::Constant' => '0.05',
     },
     build_requires => {
         'Test::More' => 0,
