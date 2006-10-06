@@ -13,7 +13,7 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.44.1"
-   sodipodi:docbase="/home/rob/goodnight"
+   sodipodi:docbase="/home/rob/svn/goodnight/trunk/web/tiletest"
    sodipodi:docname="tiles.svg">
   <defs
      id="defs4" />
@@ -28,7 +28,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.50933035"
-     inkscape:cx="25.279804"
+     inkscape:cx="372.04724"
      inkscape:cy="526.18109"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -53,14 +53,14 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:none;fill-rule:evenodd;stroke:black;stroke-width:0.69614798px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:black;stroke-width:1.14897676;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect2853"
        width="142.14622"
        height="142.14622"
        x="-339.85266"
        y="-601.18024"
        transform="matrix(0.909078,-0.416626,-0.909078,-0.416626,0,0)"
-       inkscape:export-filename="/home/rob/goodnight/blank.png"
+       inkscape:export-filename="/home/rob/svn/goodnight/trunk/web/tiletest/blank.png"
        inkscape:export-xdpi="34.74234"
        inkscape:export-ydpi="34.74234" />
   </g>

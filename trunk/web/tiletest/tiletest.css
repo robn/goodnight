@@ -1,5 +1,5 @@
 body {
-    background-color: black;
+    background-color: white;
 }
 
 img.tile {
@@ -10,5 +10,5 @@ img.tile {
 }
 
 img.tile:hover {
-    background: green;
+    background-color: green;
 }
