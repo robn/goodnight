@@ -17,6 +17,7 @@ p#debug {
     position: fixed;
     top: 0; left: 0;
     font-family: monospace;
+    white-space: pre;
     background-color: #cceeee;
     margin: 0;
     padding: 0;

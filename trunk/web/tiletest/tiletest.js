@@ -31,7 +31,7 @@ function debug (text) {
     }
 }
 
-var marker;
+var select;
 
 function page_to_map (page_x, page_y) {
     /*
@@ -71,16 +71,15 @@ function page_to_map (page_x, page_y) {
     var tile_x = in_tile1 ? tile1_x : tile2_x;
     var tile_y = in_tile1 ? tile1_y : tile2_y;
 
-    if(!marker) {
-        marker = document.createElement("img");
-        marker.setAttribute("class", "tile");
-        marker.setAttribute("src", "blank.png");
-        marker.style.position = "absolute";
-        marker.style.backgroundColor = "#ff8888";
-        document.body.appendChild(marker);
+    if(!select) {
+        select = document.createElement("img");
+        select.setAttribute("class", "tile");
+        select.setAttribute("src", "select.png");
+        select.style.position = "absolute";
+        document.body.appendChild(select);
     }
-    marker.style.top = tile_y;
-    marker.style.left = tile_x;
+    select.style.top = tile_y;
+    select.style.left = tile_x;
 
     var map_y = Math.floor((tile_y * half_width - page_x * half_height) / (2 * half_width * half_height));
     var map_x = Math.floor((tile_x + half_width * map_y) / half_width);
@@ -89,11 +88,11 @@ function page_to_map (page_x, page_y) {
         "[px,py]   = [" + page_x + "," + page_y + "]",
         "[t1x,t1y] = [" + tile1_x + "," + tile1_y + "]",
         "[t2x,t2y] = [" + tile2_x + "," + tile2_y + "]",
-        "    in t1 = " + in_tile1,
+        "in t1     = " + in_tile1,
         "[mx,my]   = [" + map_x + "," + map_y + "]"
     ]);
 
-    return [ mx, my ];
+    return [ map_x, map_y ];
 }
 
 function add_tile (map_x, map_y, page_x, page_y) {
