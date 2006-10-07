@@ -12,46 +12,88 @@ var origin_y = 0;
 var half_width = tile_width/2;
 var half_height = tile_height/2;
 
-function set_status (text) {
-    var p = document.getElementById("status");
-
-    var text = document.createTextNode(text);
+function debug (text) {
+    var p = document.getElementById("debug");
 
     while (p.hasChildNodes()) {
         p.removeChild(p.lastChild);
     }
 
-    p.appendChild(text);
+    if (typeof text == "string") {
+        p.appendChild(document.createTextNode(text));
+    }
+
+    else if (typeof text == "object" && text.constructor == Array) {
+        for (i in text) {
+            p.appendChild(document.createTextNode(text[i]));
+            p.appendChild(document.createElement("br"));
+        }
+    }
 }
 
+var marker;
+
 function page_to_map (page_x, page_y) {
-    page_x -= origin_x;
-    page_y -= origin_y;
+    /*
+     * we consider the map as being two overlaid grids of tiles, one starting
+     * at [0,0] and one starting at [half_width,half_height]
+     *
+     * in the general case, there are always two tiles under the mouse, one
+     * from each grid. we need to find the top-left corners of their bounding
+     * boxes
+     */
+     
+    var tile1_x = Math.floor(page_x / tile_width) * tile_width;
+    var tile1_y = Math.floor(page_y / tile_height) * tile_height;
 
-    var tile_x = Math.floor (page_x / tile_width) * tile_width;
-    var tile_y = Math.floor (page_y / half_height) * half_height;
+    var tile2_x = Math.floor((page_x+half_width) / tile_width) * tile_width - half_width;
+    var tile2_y = Math.floor((page_y+half_height) / tile_height) * tile_height - half_height;
 
-    var delta_x = page_x - tile_x;
-    var delta_y = page_y - tile_y;
+    /*
+     * to distinguish between the tiles, we need to find the edge that goes
+     * between the two tiles and then figure out which side of it the mouse is
+     * currently on
+     *
+     * we cheat slightly. the edge goes between the two tile centres, so we
+     * get the centres but swap the y-coords to get the edge endpoints.
+     */
 
-    var outside1 = (-edge_gradient * delta_x - (-edge_gradient * half_width) - delta_y) > 0;
-    var outside2 = (edge_gradient * delta_x - (edge_gradient * width) - delta_y + half_height) > 0;
-    var outside3 = (-edge_gradient * delta_x - (-edge_gradient * half_width) - delta_y + tile_height) < 0;
-    var outside4 = (edge_gradient * delta_x - delta_y + half_height) < 0;
+    var e1x = tile1_x + half_width; var e1y = tile2_y + half_height;
+    var e2x = tile2_x + half_width; var e2y = tile1_y + half_height;
 
-    return [ "" + delta_x + "," + delta_y + ":" + outside1 + "," + outside2, "" + outside3 + "," + outside4 ];
+    /* compute the line */
+    var m = (e2y-e1y) / (e2x-e1x);
+    var c = e1y - m*e1x;
 
-    
+    var in_tile1 = (page_y > m * page_x+c);
+    if (tile1_y < tile2_y) in_tile1 = !in_tile1;
 
-    return [ delta_x, delta_y ];
+    var tile_x = in_tile1 ? tile1_x : tile2_x;
+    var tile_y = in_tile1 ? tile1_y : tile2_y;
 
-    var map_y = (page_y * half_width - page_x * half_height) / (2 * half_width * half_height);
-    var map_x = (page_x + half_width * map_y) / half_width;
+    if(!marker) {
+        marker = document.createElement("img");
+        marker.setAttribute("class", "tile");
+        marker.setAttribute("src", "blank.png");
+        marker.style.position = "absolute";
+        marker.style.backgroundColor = "#ff8888";
+        document.body.appendChild(marker);
+    }
+    marker.style.top = tile_y;
+    marker.style.left = tile_x;
 
-    //var map_x = Math.floor ((page_x - origin_x) / half_width);
-    //var map_y = Math.floor ((page_y - origin_y) / half_height);
+    var map_y = Math.floor((tile_y * half_width - page_x * half_height) / (2 * half_width * half_height));
+    var map_x = Math.floor((tile_x + half_width * map_y) / half_width);
 
-    return [ Math.floor(map_x), Math.floor(map_y) ];
+    debug([
+        "[px,py]   = [" + page_x + "," + page_y + "]",
+        "[t1x,t1y] = [" + tile1_x + "," + tile1_y + "]",
+        "[t2x,t2y] = [" + tile2_x + "," + tile2_y + "]",
+        "    in t1 = " + in_tile1,
+        "[mx,my]   = [" + map_x + "," + map_y + "]"
+    ]);
+
+    return [ mx, my ];
 }
 
 function add_tile (map_x, map_y, page_x, page_y) {
@@ -79,6 +121,5 @@ function setup_tiles () {
 
     document.body.addEventListener("mousemove", function (e) {
         var map_xy = page_to_map(e.pageX, e.pageY);
-        set_status("[" + map_xy[0] + "," + map_xy[1] + "]");
     }, false);
 }

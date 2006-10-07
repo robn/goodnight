@@ -10,5 +10,14 @@ img.tile {
 }
 
 img.tile:hover {
-    background-color: green;
+/*    background-color: green; */
+}
+
+p#debug {
+    position: fixed;
+    top: 0; left: 0;
+    font-family: monospace;
+    background-color: #cceeee;
+    margin: 0;
+    padding: 0;
 }
