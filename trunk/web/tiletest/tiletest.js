@@ -42,7 +42,6 @@ function page_to_map (page_x, page_y) {
      * from each grid. we need to find the top-left corners of their bounding
      * boxes
      */
-     
     var tile1_x = Math.floor(page_x / tile_width) * tile_width;
     var tile1_y = Math.floor(page_y / tile_height) * tile_height;
 
@@ -57,7 +56,6 @@ function page_to_map (page_x, page_y) {
      * we cheat slightly. the edge goes between the two tile centres, so we
      * get the centres but swap the y-coords to get the edge endpoints.
      */
-
     var e1x = tile1_x + half_width; var e1y = tile2_y + half_height;
     var e2x = tile2_x + half_width; var e2y = tile1_y + half_height;
 
@@ -65,11 +63,17 @@ function page_to_map (page_x, page_y) {
     var m = (e2y-e1y) / (e2x-e1x);
     var c = e1y - m*e1x;
 
+    /* figure out if we're above or below the line */
     var in_tile1 = (page_y > m * page_x+c);
+    /* but if tile1 is above tile2, then swap it over */
     if (tile1_y < tile2_y) in_tile1 = !in_tile1;
 
+    /* our tile */
     var tile_x = in_tile1 ? tile1_x : tile2_x;
     var tile_y = in_tile1 ? tile1_y : tile2_y;
+
+    var map_y = Math.floor((tile_y * half_width - page_x * half_height) / (2 * half_width * half_height));
+    var map_x = Math.floor((tile_x + half_width * map_y) / half_width);
 
     if(!select) {
         select = document.createElement("img");
@@ -80,9 +84,6 @@ function page_to_map (page_x, page_y) {
     }
     select.style.top = tile_y;
     select.style.left = tile_x;
-
-    var map_y = Math.floor((tile_y * half_width - page_x * half_height) / (2 * half_width * half_height));
-    var map_x = Math.floor((tile_x + half_width * map_y) / half_width);
 
     debug([
         "[px,py]   = [" + page_x + "," + page_y + "]",
