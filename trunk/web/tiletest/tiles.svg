@@ -68,10 +68,54 @@
        id="rect2822"
        width="142.14622"
        height="142.14622"
-       x="-341.76282"
-       y="-672.20135"
+       x="-303.93506"
+       y="-732.63538"
        transform="matrix(0.909078,-0.416626,-0.909078,-0.416626,0,0)"
        inkscape:export-filename="/home/rob/svn/goodnight/trunk/web/tiletest/blank.png"
+       inkscape:export-xdpi="34.74234"
+       inkscape:export-ydpi="34.74234" />
+    <rect
+       style="fill:red;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.1489768;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1879"
+       width="142.14622"
+       height="142.14622"
+       x="-420.94922"
+       y="-278.25299"
+       transform="matrix(0.909078,-0.416626,-0.909078,-0.416626,0,0)"
+       inkscape:export-filename="/home/rob/svn/goodnight/trunk/web/tiletest/red.png"
+       inkscape:export-xdpi="34.74234"
+       inkscape:export-ydpi="34.74234" />
+    <rect
+       style="fill:lime;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.1489768;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2766"
+       width="142.14622"
+       height="142.14622"
+       x="-612.96796"
+       y="-470.27173"
+       transform="matrix(0.909078,-0.416626,-0.909078,-0.416626,0,0)"
+       inkscape:export-filename="/home/rob/svn/goodnight/trunk/web/tiletest/green.png"
+       inkscape:export-xdpi="34.74234"
+       inkscape:export-ydpi="34.74234" />
+    <rect
+       style="fill:yellow;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.1489768;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3653"
+       width="142.14622"
+       height="142.14622"
+       x="-804.98669"
+       y="-662.29047"
+       transform="matrix(0.909078,-0.416626,-0.909078,-0.416626,0,0)"
+       inkscape:export-filename="/home/rob/svn/goodnight/trunk/web/tiletest/yellow.png"
+       inkscape:export-xdpi="34.74234"
+       inkscape:export-ydpi="34.74234" />
+    <rect
+       style="fill:blue;fill-opacity:1;fill-rule:evenodd;stroke:black;stroke-width:1.1489768;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4540"
+       width="142.14622"
+       height="142.14622"
+       x="-1021.9813"
+       y="-878.67346"
+       transform="matrix(0.909078,-0.416626,-0.909078,-0.416626,0,0)"
+       inkscape:export-filename="/home/rob/svn/goodnight/trunk/web/tiletest/blue.png"
        inkscape:export-xdpi="34.74234"
        inkscape:export-ydpi="34.74234" />
   </g>
