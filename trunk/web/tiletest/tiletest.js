@@ -4,9 +4,6 @@ var height = 7;
 var tile_width = 100;
 var tile_height = 46;
 
-var origin_x = (height-1) * (tile_width/2);
-var origin_y = 0;
-
 var half_width = tile_width/2;
 var half_height = tile_height/2;
 
@@ -124,7 +121,8 @@ function add_tile (map_x, map_y, page_x, page_y) {
     img.setAttribute("class", "tile");
 
     var map_xy = tile_to_map(page_x, page_y);
-    img.setAttribute("src", tiles[map[map_xy[0]][map_xy[1]+10]]);
+//    img.setAttribute("src", tiles[map[map_xy[0]][map_xy[1]+10]]);
+    img.setAttribute("src", "blank.png");
 
     img.style.left = page_x;
     img.style.top = page_y;

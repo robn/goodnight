@@ -1,0 +1,9 @@
+grid can interrogate map for:
+ - map size (width,height)
+ - location contents
+   - terrain type
+   - characters
+ 
+map will tell grid about:
+ - character movement between two locations
+ - character warp (ie scatter after battle)
