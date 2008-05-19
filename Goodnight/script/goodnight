@@ -135,9 +135,10 @@ sub complete {
 while (! $game->is_game_over) {
     my $line;
     while ($line = prompt "What now? ",
-                          -until => $cmd_regex,
-                          -complete => [ -bell, -show,
-                                         \&complete, -split => qr/\s+/ ]) {
+                          -until => $cmd_regex) {
+# XXX make it work with an IO::Prompt with no completion
+#                          -complete => [ -bell, -show,
+#                                         \&complete, -split => qr/\s+/ ]) {
         next if $line eq "";
 
         my ($cmd) = split /\s+/, $line;

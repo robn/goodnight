@@ -381,6 +381,10 @@ sub init_doomguard {
             $def{target} = $self->get_map->get_route_node($def{target});
         }
 
+        # XXX hack to get it running again with Class::Std < 0.0.9
+        #     see Doomguard::PREBUILD
+        $def{race} = Goodnight::Race::FOUL;
+
         my $doomguard = Goodnight::Doomguard->new(\%def);
         $doomguard->guard($x, $y);
 

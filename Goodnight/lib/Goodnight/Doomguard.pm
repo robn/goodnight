@@ -21,6 +21,8 @@ my %id                  : ATTR;
 
 my $next_id = 1;
 
+# XXX hack to get it running again with Class::Std < 0.0.9
+#     see Game::init_doomguard
 sub PREBUILD {
     my ($class, $args) = @_;
 
