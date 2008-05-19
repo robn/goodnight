@@ -1,10 +1,10 @@
-if (typeof Iso == "undefined") Iso = {};
+if (typeof UI == "undefined") UI = {};
 
-Iso.Cache = function () {
+UI.Cache = function () {
     this.graphic = {};
 }
 
-Iso.Cache.prototype.addGraphic = function (name, url, width, height, centrex, centrey) {
+UI.Cache.prototype.addGraphic = function (name, url, width, height, centrex, centrey) {
     if (this.graphic[name])
         return;
 
@@ -25,7 +25,7 @@ Iso.Cache.prototype.addGraphic = function (name, url, width, height, centrex, ce
     };
 }
 
-Iso.Cache.prototype.addGraphics = function (list) {
+UI.Cache.prototype.addGraphics = function (list) {
     var name;
     for (name in list) {
         var graphic = list[name];

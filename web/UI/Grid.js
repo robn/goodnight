@@ -1,6 +1,6 @@
-if (typeof Iso == "undefined") Iso = {};
+if (typeof UI == "undefined") UI = {};
 
-Iso.Grid = function (cache, element, map, left, top, width, height) {
+UI.Grid = function (cache, element, map, left, top, width, height) {
     this.cache = cache;
     this.element = element;
 
@@ -9,7 +9,7 @@ Iso.Grid = function (cache, element, map, left, top, width, height) {
     this.reset(left, top, width, height);
 }
 
-Iso.Grid.prototype.reset = function (left, top, width, height) {
+UI.Grid.prototype.reset = function (left, top, width, height) {
     // display area
     this.left = left;
     this.top = top;
@@ -47,7 +47,7 @@ Iso.Grid.prototype.reset = function (left, top, width, height) {
     this.show();
 }
 
-Iso.Grid.prototype.show = function () {
+UI.Grid.prototype.show = function () {
     while (this.element.hasChildNodes())
         this.element.removeChild(this.element.firstChild);
         
@@ -71,7 +71,7 @@ Iso.Grid.prototype.show = function () {
     }
 }
 
-Iso.Grid.prototype.hover = function (px, py) {
+UI.Grid.prototype.hover = function (px, py) {
     /*
      * we consider the map as being two overlaid grids of tiles, one starting
      * at [0,0] and one starting at [half_width,half_height]
@@ -141,7 +141,7 @@ Iso.Grid.prototype.hover = function (px, py) {
 }
 
 /* tile (pixel) position to grid coords */
-Iso.Grid.prototype.tile_to_grid = function (tx, ty) {
+UI.Grid.prototype.tile_to_grid = function (tx, ty) {
     if (typeof tx == "object") {
         ty = tx.y;
         tx = tx.x;
@@ -154,7 +154,7 @@ Iso.Grid.prototype.tile_to_grid = function (tx, ty) {
 }
 
 /* grid coords to map coords (ie rotate + offset) */
-Iso.Grid.prototype.grid_to_map = function (gx, gy) {
+UI.Grid.prototype.grid_to_map = function (gx, gy) {
     if (typeof gx == "object") {
         gy = gx.y;
         gx = gx.x;
@@ -204,5 +204,5 @@ mx = (4 * gx * HW + gy * HW - gx * TW + OFF) / (2 * HW)
 }
 
 /* map coords to grid coords */
-Iso.Grid.prototype.map_to_grid = function (mx, my) {
+UI.Grid.prototype.map_to_grid = function (mx, my) {
 }

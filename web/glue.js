@@ -22,14 +22,14 @@ var graphics = {
 };
 
 function go () {
-    var cache = new Iso.Cache();
+    var cache = new UI.Cache();
     cache.addGraphics(graphics);
 
 //    var m = new Map;
     // something
 
     var element = document.getElementById("grid");
-    var grid = new Iso.Grid(cache, element, null, 0, 0, window.innerWidth, window.innerHeight);
+    var grid = new UI.Grid(cache, element, null, 0, 0, window.innerWidth, window.innerHeight);
 
     element.addEventListener("mousemove", function (e) {
         grid.hover(e.pageX, e.pageY);
