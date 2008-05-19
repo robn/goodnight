@@ -166,7 +166,7 @@ sub run {
                             $free{ident $self}));
     }
 
-    # !!! lots of fancy printing omitted here, should bring it over
+    # XXX lots of fancy printing omitted here, should bring it over
 
     $self->determine_result;
 }

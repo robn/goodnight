@@ -17,7 +17,7 @@ use Goodnight::Race;
 
 use Class::Std;
 
-# !!! suckish way of handling public variables
+# XXX suckish way of handling public variables
 my %public_data :ATTR;
 my %public_keys = map { $_ => 1 } qw(LUXOR MORKIN CORLETH RORTHRON
                                      GARD MARAKITH XAJORKITH GLOOM
@@ -156,7 +156,7 @@ sub check_special_conditions {
     $self->check_game_over;
 }
 
-# !!! this feels wrong. its supposed to be +5 per citadel, +2 per keep, but this
+# XXX this feels wrong. its supposed to be +5 per citadel, +2 per keep, but this
 # does +2 for anything other than a citadel; ie all armies give a bonus
 sub calc_doomdarks_citadels {
     my ($self) = @_;

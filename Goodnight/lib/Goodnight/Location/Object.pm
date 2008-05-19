@@ -34,7 +34,7 @@ sub is_beast {
            $object == SKULKRIN;
 }
 
-# !!! this is badness of astronomical proportions. its bad enough that these
+# XXX this is badness of astronomical proportions. its bad enough that these
 # enum classes have additional methods in them. its inexcusable to build game
 # mechanics into them, and its just as bad to abuse a stringification method
 # this way.

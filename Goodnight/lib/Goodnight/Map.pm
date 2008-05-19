@@ -12,7 +12,7 @@ use Goodnight::Map::Direction;
 
 use Class::Std;
 
-# !!! suckish way of handling public variables
+# XXX suckish way of handling public variables
 my %public_data :ATTR;
 my %public_keys = map { $_ => 1 } qw(TOWER_OF_DESPAIR XAJORKITH USHGARAK LAKE_MIRROW);
 
@@ -86,14 +86,14 @@ sub get_looking_towards {
     return $location;
 }
 
-# !!! static method. this should be in Location.pm
+# XXX static method. this should be in Location.pm
 sub calc_distance {
     my ($a, $b) = @_;
 
     return abs($a->get_x - $b->get_x) + abs($a->get_y - $b->get_y);
 }
 
-# !!! static method. this should be in Location.pm
+# XXX static method. this should be in Location.pm
 sub calc_direction {
     my ($origin, $target) = @_;
 
