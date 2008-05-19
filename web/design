@@ -1,0 +1,29 @@
+some kind of design. currently based on deciphering code >18 months old
+
+Cache:
+a basic image cache. tracks tiles/icons/whatever, their names, files and dimensions
+
+Grid:
+the map/game display/ui. it displays the map and accepts input to trigger
+functions. no game logic
+
+Map:
+the power behind the grid. the map knows about the entire game layout, what
+terrain/item/character is in each tile, etc
+
+
+
+
+
+---------------------------------------------------------
+old old notes:
+
+grid can interrogate map for:
+ - map size (width,height)
+ - location contents
+   - terrain type
+   - characters
+ 
+map will tell grid about:
+ - character movement between two locations
+ - character warp (ie scatter after battle)
